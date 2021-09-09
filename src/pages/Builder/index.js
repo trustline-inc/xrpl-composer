@@ -11,16 +11,20 @@ function Builder() {
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
   const [accountSettings, setAccountSettings] = React.useState(undefined)
-  const accounts = React.useMemo(() => {
-    return JSON.parse(window.localStorage.getItem("accounts")) || {};
-  }, []);
+  const [accounts, setAccounts] = React.useState(JSON.parse(window.localStorage.getItem("accounts")) || {});
   const hasAccounts = Object.keys(accounts).length !== 0
   const location = useLocation();
 
-  const handleCloseCreateNodeModal = () => setShowNodeModal(false);
+  const handleCloseCreateNodeModal = () => {
+    setShowNodeModal(false);
+    setAccounts(JSON.parse(window.localStorage.getItem("accounts")))
+  }
   const handleShowNodeModal = () => setShowNodeModal(true);
 
-  const handleCloseTrustLineModal = () => setShowTrustLineModal(false);
+  const handleCloseTrustLineModal = () => {
+    setShowTrustLineModal(false);
+    setAccounts(JSON.parse(window.localStorage.getItem("accounts")))
+  }
   const handleShowTrustLineModal = () => setShowTrustLineModal(true);
 
   /**
@@ -51,7 +55,7 @@ function Builder() {
   return (
     <div className="container-fluid mt-5">
       <CreateNodeModal show={showCreateNodeModal} handleClose={handleCloseCreateNodeModal} />
-      <CreateTrustLineModal show={showTrustLineModal} handleClose={handleCloseTrustLineModal} />
+      <CreateTrustLineModal show={showTrustLineModal} handleClose={handleCloseTrustLineModal} selectedNode={selectedNode} />
       <div className="row">
         <div className="col-3">
           <h4>Nodes</h4>
@@ -69,14 +73,11 @@ function Builder() {
               )
             }
           </div>
-          <button type="button" className="btn btn-primary btn-block mt-5 mb-3" onClick={handleShowNodeModal}>
+          <button type="button" className="btn btn-secondary btn-block mt-5" onClick={handleShowNodeModal}>
             Create Node
           </button>
-          <button type="button" className="btn btn-primary btn-block" onClick={handleShowTrustLineModal}>
-            Create Trust Line
-          </button>
         </div>
-        <div className="col-9">
+        <div className="col-6">
           <Switch>
             <Route path={`${path}/:nodeId`}>
               <h5>Account</h5>
@@ -101,6 +102,18 @@ function Builder() {
               }
             </Route>
           </Switch>
+        </div>
+        <div className="col-3">
+          <h4 className="mb-3">Actions</h4>
+          <button type="button" className="btn btn-primary btn-block mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
+            Create Trust Line
+          </button>
+          <button type="button" className="btn btn-primary btn-block mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
+            Send Payment
+          </button>
+          <button type="button" className="btn btn-primary btn-block" disabled={!selectedNode} onClick={() => {}}>
+            Delete Account
+          </button>
         </div>
       </div>
     </div>

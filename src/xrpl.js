@@ -71,6 +71,24 @@ export async function createTrustLine(account, counterparty) {
   )
 }
 
+export async function enableRippling(account) {
+  console.log(`Enabling rippling for ${account.address}`)
+  const prepared = await api.prepareSettings(account.address, { defaultRipple: true })
+  const maxLedgerVersion = prepared.instructions.maxLedgerVersion
+  const response = api.sign(prepared.txJSON, account.secret)
+  const txID = response.id
+  const txBlob = response.signedTransaction
+  const result = await api.submit(txBlob)
+  console.log(result.resultCode, result.resultMessage)
+  const latestLedgerVersion = await api.getLedgerVersion()
+  const earliestLedgerVersion = latestLedgerVersion + 1
+  await validateTransaction(
+    txID,
+    earliestLedgerVersion,
+    maxLedgerVersion
+  )
+}
+
 export async function validateTransaction(
   txID,
   earliestLedgerVersion,

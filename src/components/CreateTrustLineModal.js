@@ -2,16 +2,10 @@ import React from "react";
 import { Button, Form, Modal } from "react-bootstrap"
 import { createTrustLineEdge } from "../graph"
 
-function CreateTrustLineModal({ show, handleClose }) {
+function CreateTrustLineModal({ show, handleClose, selectedNode }) {
   const [loading, setLoading] = React.useState(false)
-  const [source, setSource] = React.useState()
   const [target, setTarget] = React.useState()
   const [limit, setLimit] = React.useState()
-
-  const onChangeSource = (event) => {
-    event.target.value = event.target.value.toUpperCase()
-    setSource(event.target.value)
-  }
 
   const onChangeTarget = (event) => {
     event.target.value = event.target.value.toUpperCase()
@@ -24,7 +18,7 @@ function CreateTrustLineModal({ show, handleClose }) {
 
   const handleSave = async () => {
     setLoading(true)
-    await createTrustLineEdge(source, target, limit)
+    await createTrustLineEdge(selectedNode, target, limit)
     setLoading(false)
     handleClose()
   }
@@ -38,7 +32,7 @@ function CreateTrustLineModal({ show, handleClose }) {
         <Form>
           <Form.Group className="mb-3" controlId="node.Id">
             <Form.Label>Source Node</Form.Label>
-            <Form.Control type="text" onChange={onChangeSource} name="source" />
+            <Form.Control type="text" name="source" value={selectedNode} disabled={true} />
           </Form.Group>
           <Form.Group className="mb-3" controlId="node.Id">
             <Form.Label>Target Node</Form.Label>

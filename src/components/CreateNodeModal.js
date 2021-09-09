@@ -10,7 +10,7 @@ function CreateNodeModal({ show, handleClose }) {
   })
 
   const onChangeInput = (event) => {
-    event.target.value = event.target.value.toUpperCase()
+    event.target.value = event.target.value.toUpperCase().replace(" ", "_").replace(/[\W]+/g, "");
     setData({
       ...data,
       [event.target.name]: event.target.value
@@ -26,7 +26,7 @@ function CreateNodeModal({ show, handleClose }) {
 
   const handleSave = async () => {
     setLoading(true)
-    await createAccountNode(data.id)
+    await createAccountNode(data)
     setLoading(false)
     handleClose()
   }
