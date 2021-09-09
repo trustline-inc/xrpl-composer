@@ -1,0 +1,74 @@
+{
+  "PARTY_0": {
+    "account": {
+      "xAddress": "TVPhMAebpXMjiaZUWfNQHaEZe2iJmFTZ4a3ev7i4tiVf9FV",
+      "secret": "snoPmtiU1dTgtsSz9QSdnW7Vb9A22",
+      "classicAddress": "rJoaVARLWqP8PooYVFLPuRvsdKsYp4nvsq",
+      "address": "rJoaVARLWqP8PooYVFLPuRvsdKsYp4nvsq"
+    },
+    "rippling": false
+  },
+  "PARTY_1": {
+    "account": {
+      "xAddress": "T7yPeXRw3NvWA2QCJtBYJoW2dkyRUVjCaakYe54Yu3FAJRE",
+      "secret": "shLhsH14mvKFdRQoset9kW8Nsq6AA",
+      "classicAddress": "rBXqn4gYWHvCng1PwmNxofpwvipY6nMUAW",
+      "address": "rBXqn4gYWHvCng1PwmNxofpwvipY6nMUAW"
+    },
+    "rippling": true
+  },
+  "PARTY_2": {
+    "account": {
+      "xAddress": "TVNQnpKKx9VMMFp1Z7N4pp5MLq8g37vWNU623sLEs7f88vn",
+      "secret": "sp87GT2TGcwJ7HZMyd1Nh6LLMrV9P",
+      "classicAddress": "rG3xpo6Hk6tNgumWM3ypbgwgEsBzvwSVk2",
+      "address": "rG3xpo6Hk6tNgumWM3ypbgwgEsBzvwSVk2"
+    },
+    "rippling": true
+  },
+  "PARTY_3": {
+    "account": {
+      "xAddress": "TV3XUS4FtRUkvcPTEB9NAwJuEnSEpUScZmfAyipdTya4Km9",
+      "secret": "ssLj4QZAPWMry46jug4fyXPJGPwye",
+      "classicAddress": "rNLLjwufM3kg1ZGHEz7zSgNWYRa7pyzMKq",
+      "address": "rNLLjwufM3kg1ZGHEz7zSgNWYRa7pyzMKq"
+    },
+    "rippling": false
+  },
+  "ISSUER_0": {
+    "account": {
+      "xAddress": "T7TVQzjquJcQSkK7ihV7fo6dyb3Cv8MKqCZ6GKAd4YBP2PW",
+      "secret": "saairfGkVCP3RQ7u7jkFrdTvB9N6z",
+      "classicAddress": "rpMcqzNX4Znh5jbusQiSRW8SK23ghQ3P8g",
+      "address": "rpMcqzNX4Znh5jbusQiSRW8SK23ghQ3P8g"
+    },
+    "rippling": true
+  },
+  "ISSUER_1": {
+    "account": {
+      "xAddress": "TVHQMJxcCJKvxhshWDUCMaHK8Xrh94QUiSFffpxcqEPfoaw",
+      "secret": "shcALZSzquWmt6GzcWpoqmm9ct9dK",
+      "classicAddress": "rHhSf8f7573g1uJ4qtFRYtEniNUdtEKqbZ",
+      "address": "rHhSf8f7573g1uJ4qtFRYtEniNUdtEKqbZ"
+    },
+    "rippling": true
+  },
+  "ISSUER_2": {
+    "account": {
+      "xAddress": "TVUb8BnrYYbsG8oFjR5UJXpYkQ4eBxK1wQHTmGmC9U5ah3U",
+      "secret": "ssT9TMkrsJpHhLrnP558CZ2GjB89y",
+      "classicAddress": "rE2AjU5JLrUWKsmqTsbs2QGNKB6HFQbX4S",
+      "address": "rE2AjU5JLrUWKsmqTsbs2QGNKB6HFQbX4S"
+    },
+    "rippling": true
+  },
+  "COUNTERFEITER": {
+    "account": {
+      "xAddress": "T7SDEVDUbDmtU6QZbPTrY7pGbVtessRi8Yj9pKhMtf3qC5M",
+      "secret": "shi8MfZchZxei6CuH2QB5gZ1iH4nh",
+      "classicAddress": "rximuXDU8RF5rjS6T1vq8rsbDXmxbqMEY",
+      "address": "rximuXDU8RF5rjS6T1vq8rsbDXmxbqMEY"
+    },
+    "rippling": true
+  }
+}

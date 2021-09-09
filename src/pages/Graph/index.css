@@ -1,0 +1,28 @@
+.Graph {
+  text-align: center;
+  background-color: #282c34;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  min-width: 100vw
+}
+
+.node {}
+
+svg {
+  position: fixed;
+  height: 100%;
+}
+
+@media (min-aspect-ratio: 16/9) {
+  svg {
+    height: auto;
+    width: 100%;
+  }
+}
+
+.link { stroke: #999; stroke-opacity: .6; stroke-width: 1px; }
