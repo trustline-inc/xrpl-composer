@@ -13,6 +13,17 @@ import Validator from "./pages/Validator"
 import './App.css';
 
 function App() {
+  const download = () => {
+    const exportName = "graph"
+    const data = JSON.stringify(localStorage.getItem("graph"))
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(data);
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // Required for Firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
   return (
     <div className="App">
       <Router>
@@ -37,6 +48,7 @@ function App() {
                     <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
                   </li>
                 </ul>
+                <button className="btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download}>Download</button>
               </div>
             </>
           </div>
