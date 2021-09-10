@@ -10,6 +10,7 @@
     "bootstrap": "^5.1.1",
     "d3": "^7.0.1",
     "d3-selection-multi": "^1.0.1",
+    "gh-pages": "^3.2.3",
     "graph-data-structure": "^2.0.0",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-beta.6",
@@ -23,7 +24,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
