@@ -20,7 +20,7 @@ function Explorer() {
               <button className="btn btn-primary btn-lg" onClick={() => navigate("/builder")}>Start Building</button>
             </div>
             <div className="col-md-4 d-flex justify-content-center align-items-center">
-              <img src={logo} alt="Logo" />
+              <img src={logo} alt="Mesh Sphere by Paul Krizsan from the Noun Project" />
             </div>
           </div>
         </div>
