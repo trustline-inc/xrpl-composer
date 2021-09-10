@@ -152,3 +152,52 @@ export async function deleteAccount(account) {
     maxLedgerVersion
   )
 }
+
+export async function makePayment(
+  sender,
+  receiver,
+  sentCurrencyIssuer,
+  deliveredCurrencyIssuer,
+  amount,
+  paths,
+  spec
+) {
+  let latestLedgerVersion = await api.getLedgerVersion()
+  const tx = (spec && JSON.parse(spec)) || {
+    TransactionType: "Payment",
+    Account: sender.address,
+    Amount: {
+      currency: "AUR",
+      value: amount.toString(),
+      issuer: deliveredCurrencyIssuer.address
+    },
+    SendMax: {
+      currency: "AUR",
+      value: (amount + 1).toString(),
+      issuer: sentCurrencyIssuer.address
+    },
+    Destination: receiver.address,
+    LastLedgerSequence: latestLedgerVersion + 15
+  }
+  if (paths) tx["Paths"] = paths
+  const preparedTx = await api.prepareTransaction(tx)
+  const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion
+  console.log("preparedTx:", preparedTx)
+  console.log("Transaction cost:", preparedTx.instructions.fee, "XRP")
+  console.log("Transaction expires after ledger:", maxLedgerVersion)
+  const response = api.sign(preparedTx.txJSON, sender.secret)
+  const txID = response.id
+  console.log("Identifying hash:", txID)
+  const txBlob = response.signedTransaction
+  console.log("Signed blob:", txBlob)
+  latestLedgerVersion = await api.getLedgerVersion()
+  const result = await api.submit(txBlob)
+  console.log("Tentative result code:", result.resultCode)
+  console.log("Tentative result message:", result.resultMessage)
+  const earliestLedgerVersion = latestLedgerVersion + 1
+  return await validateTransaction(
+    txID,
+    earliestLedgerVersion,
+    maxLedgerVersion
+  )
+}

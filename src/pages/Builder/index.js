@@ -1,17 +1,19 @@
 import React from "react";
-import { NavLink, Switch, Route, useRouteMatch, useLocation } from "react-router-dom";
+import { Switch, Route, useRouteMatch, useLocation, useHistory } from "react-router-dom";
+import { Button, ListGroup } from "react-bootstrap"
 import CreateNodeModal from "../../components/CreateNodeModal";
 import CreateTrustLineModal from "../../components/CreateTrustLineModal";
-import { api, getSettings, getTrustLines } from "../../xrpl"
+import { api, getTrustLines } from "../../xrpl"
 import { removeNode } from "../../graph"
+import "./index.css"
 
 function Builder() {
-  const { path, url } = useRouteMatch();
+  const history = useHistory();
+  const { path } = useRouteMatch();
   const [selectedNode, setSelectedNode] = React.useState(undefined)
   const [showCreateNodeModal, setShowNodeModal] = React.useState(false);
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
-  const [accountSettings, setAccountSettings] = React.useState(undefined)
   const [accounts, setAccounts] = React.useState(JSON.parse(window.localStorage.getItem("accounts")) || {});
   const hasAccounts = Object.keys(accounts).length !== 0
   const location = useLocation();
@@ -28,6 +30,10 @@ function Builder() {
   }
   const handleShowTrustLineModal = () => setShowTrustLineModal(true);
 
+  const goToValidator = () => {
+    history.push(`/validator?account=${selectedNode && accounts[selectedNode].account.address}`);
+  }
+
   /**
    * Fetch node info when selected
    */
@@ -35,9 +41,7 @@ function Builder() {
     (async () => {
       if (selectedNode) {
         await api.connect()
-        const settings = await getSettings(accounts[selectedNode].account.address)
         const trustLines = await getTrustLines(accounts[selectedNode].account.address)
-        setAccountSettings(settings)
         setAccountTrustLines(trustLines)
         await api.disconnect()
       }
@@ -61,36 +65,32 @@ function Builder() {
         <div className="col-3">
           <h4>Nodes</h4>
           <p className="text-muted">Please select a node from the list below or create a new node.</p>
-          <div className="list-group">
+          <ListGroup as="ul">
             {
               hasAccounts ? (
                 Object.keys(accounts).map(id => (
-                  <NavLink key={id} to={`${url}/${id}`} onClick={() => setSelectedNode(id)} activeClassName="active" className="list-group-item list-group-item-action">
+                  <ListGroup.Item as="li" active={window.location.pathname === `/builder/${id}`} key={id} onClick={() => { setSelectedNode(id); history.push(`/builder/${id}`) }}>
                     {id}
-                  </NavLink>
+                  </ListGroup.Item>
                 ))
               ) : (
                 "No nodes created."
               )
             }
+          </ListGroup>
+          <div className="d-grid gap-2">
+            <Button variant="secondary" className="mt-5" onClick={handleShowNodeModal}>
+              Create Node
+            </Button>
           </div>
-          <button type="button" className="btn btn-secondary btn-block mt-5" onClick={handleShowNodeModal}>
-            Create Node
-          </button>
         </div>
         <div className="col-6 bg-light px-5 py-5">
           <Switch>
             <Route path={`${path}/:nodeId`}>
               <h5>Account</h5>
-              {
-                accountSettings ? (
-                  <pre>
-                    {JSON.stringify(accountSettings, null, 2)}
-                  </pre>
-                ) : (
-                  "No account selected."
-                )
-              }
+                <pre>
+                  {JSON.stringify(accounts[selectedNode], null, 2)}
+                </pre>
               <h5 className="mt-5">Trust Lines</h5>
               {
                 accountTrustLines ? (
@@ -98,7 +98,7 @@ function Builder() {
                     {JSON.stringify(accountTrustLines, null, 2)}
                   </pre>
                 ) : (
-                  "No account selected."
+                  "No account trust lines."
                 )
               }
             </Route>
@@ -106,15 +106,21 @@ function Builder() {
         </div>
         <div className="col-3">
           <h4 className="mb-3">Actions</h4>
-          <button type="button" className="btn btn-primary btn-block mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
-            Create Trust Line
-          </button>
-          <button type="button" className="btn btn-primary btn-block mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
+          <div className="d-grid gap-2">
+            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
+              Create Trust Line
+            </Button>
+          </div>
+          <div className="d-grid gap-2">
+            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={goToValidator}>
             Send Payment
-          </button>
-          <button type="button" className="btn btn-primary btn-block" disabled={!selectedNode} onClick={() => { removeNode(selectedNode) }}>
+            </Button>
+          </div>
+          <div className="d-grid gap-2">
+            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={() => { removeNode(selectedNode) }}>
             Delete Account
-          </button>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ function CreateNodeModal({ show, handleClose }) {
   const [loading, setLoading] = React.useState(false)
   const [data, setData] = React.useState({
     id: "",
-    noRipple: false
+    defaultRipple: false
   })
 
   const onChangeInput = (event) => {
@@ -45,9 +45,9 @@ function CreateNodeModal({ show, handleClose }) {
             <Form.Label>Identifier</Form.Label>
             <Form.Control type="text" onChange={onChangeInput} name="id" />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="node.noRipple">
+          <Form.Group className="mb-3" controlId="node.defaultRipple">
             <Form.Check
-              name="noRipple"
+              name="defaultRipple"
               type="checkbox"
               label={"No Ripple"}
               onChange={onChangeCheckbox}

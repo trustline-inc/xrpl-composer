@@ -1,11 +1,18 @@
 import Graph from "graph-data-structure";
-import { createAccount, hasTrustLine, createTrustLine, enableRippling, deleteAccount } from "./xrpl"
+import {
+  createAccount,
+  hasTrustLine,
+  createTrustLine,
+  enableRippling,
+  deleteAccount,
+  makePayment
+} from "./xrpl"
 
 const saved = window.localStorage.getItem("graph")
 const graph = Graph(JSON.parse(saved));
 
 export async function createNode(data) {
-  const { id, noRipple } = data;
+  const { id, defaultRipple } = data;
   let accounts = window.localStorage.getItem("accounts")
 
   if (!accounts) {
@@ -16,8 +23,8 @@ export async function createNode(data) {
 
   if (!accounts[id]) {
     const account = await createAccount()
-    if (!noRipple) await enableRippling(account)
-    accounts[id] = { account, noRipple }
+    if (!defaultRipple) await enableRippling(account)
+    accounts[id] = { account, defaultRipple }
     const newAccounts = JSON.stringify(accounts, null, 2);
     window.localStorage.setItem("accounts", newAccounts)
     console.log(`${id}:`, account.address)
@@ -56,6 +63,10 @@ export async function removeNode(id) {
   window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
   delete accounts[id]
   window.localStorage.setItem("accounts", JSON.stringify(accounts))
+}
+
+export async function updateEdges(payment) {
+  console.log(payment)
 }
 
 export default graph
