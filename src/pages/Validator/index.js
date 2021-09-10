@@ -120,7 +120,7 @@ function Validator() {
   return (
     <div className="container mt-5">
       <div className="row">
-        <div className="col-6">
+        <div className="col-md-6">
           <h4>Payment Form</h4>
           <p className="text-muted border rounded p-3">
             <span className="fa fa-info-circle" /> Use node IDs instead of account addresses.
@@ -173,7 +173,7 @@ function Validator() {
             { loading ? <i className="fas fa-spin fa-spinner" /> : "Submit" }
           </Button>
         </div>
-        <div className="col-6">
+        <div className="col-md-6">
           <h4>Valid Paths</h4>
           <pre className="bg-light p-5">
             {JSON.stringify(paths, null, 2)}

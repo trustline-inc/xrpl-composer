@@ -76,7 +76,7 @@ function Builder() {
       <CreateNodeModal show={showCreateNodeModal} handleClose={handleCloseCreateNodeModal} />
       <CreateTrustLineModal show={showTrustLineModal} handleClose={handleCloseTrustLineModal} selectedNode={selectedNode} />
       <div className="row">
-        <div className="col-3">
+        <div className="col-md-3">
           <h4>Nodes</h4>
           <p className="text-muted">Please select a node from the list below or create a new node.</p>
           <ListGroup as="ul">
@@ -98,7 +98,7 @@ function Builder() {
             </Button>
           </div>
         </div>
-        <div className="col-6 bg-light px-5 py-5">
+        <div className="col-md-6 bg-light px-5 py-5">
           <Switch>
             <Route exact path={path}>
               <div className="d-flex justify-content-center align-items-center h-100">
@@ -123,7 +123,7 @@ function Builder() {
             </Route>
           </Switch>
         </div>
-        <div className="col-3">
+        <div className="col-md-3">
           <h4 className="mb-3">Actions</h4>
           <div className="d-grid gap-2">
             <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
