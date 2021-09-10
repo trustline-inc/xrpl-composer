@@ -65,8 +65,8 @@ export async function removeNode(id) {
   window.localStorage.setItem("accounts", JSON.stringify(accounts))
 }
 
-export async function updateEdges(payment) {
-  console.log(payment)
+export async function updateEdges(source, destination, amount) {
+  return await makePayment(source, destination, amount)
 }
 
 export default graph

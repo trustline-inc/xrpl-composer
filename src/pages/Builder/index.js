@@ -31,7 +31,7 @@ function Builder() {
   const handleShowTrustLineModal = () => setShowTrustLineModal(true);
 
   const goToValidator = () => {
-    history.push(`/validator?account=${selectedNode && accounts[selectedNode].account.address}`);
+    history.push(`/validator?account=${selectedNode}`);
   }
 
   /**

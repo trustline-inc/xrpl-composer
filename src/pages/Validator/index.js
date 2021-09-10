@@ -1,7 +1,8 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Button, Form, InputGroup, FormControl } from "react-bootstrap"
+import { Button, Form } from "react-bootstrap"
 import { updateEdges } from "../../graph"
+import { api } from "../../xrpl";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -18,15 +19,49 @@ function Validator() {
   const [sendMaxValue, setSendMaxValue] = React.useState(1)
   const [sendMaxIssuer, setSendMaxIssuer] = React.useState("")
   const [destination, setDestination] = React.useState("")
+  const accounts = JSON.parse(localStorage.getItem("accounts"))
 
-  const onClick = async () => {
+  const submit = async () => {
     setLoading(true)
-    await updateEdges()
+    const amount = {
+      currency: destinationCurrency,
+      issuer: accounts[destinationIssuer].account.address,
+      value: destinationValue.toString()
+    }
+    await api.connect()
+    const response = await updateEdges(
+      accounts[account].account,
+      accounts[destination].account.address,
+      amount
+    )
+    alert(JSON.stringify(response))
+    await api.disconnect()
     setLoading(false)
   }
 
-  const onChange = async (event) => {
-    
+  const onChangeAccount = async (event) => {
+    const value = event.target.value
+    setAccount(value)
+  }
+
+  const onChangeDestination = async (event) => {
+    const value = event.target.value
+    setDestination(value)
+  }
+
+  const onChangeDestinationAmount = async (event) => {
+    const value = event.target.value
+    setDestinationValue(value)
+  }
+
+  const onChangeDestinationCurrency = async (event) => {
+    const value = event.target.value
+    setDestinationCurrency(value)
+  }
+
+  const onChangeDestinationIssuer = async (event) => {
+    const value = event.target.value
+    setDestinationIssuer(value)
   }
 
   return (
@@ -36,10 +71,10 @@ function Validator() {
           <h4>Validator</h4>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Source</Form.Label>
+              <Form.Label>Account</Form.Label>
               <Form.Control
                 type="text"
-                onChange={onChange}
+                onChange={onChangeAccount}
                 defaultValue={account}
               />
             </Form.Group>
@@ -47,7 +82,7 @@ function Validator() {
               <Form.Label>Destination</Form.Label>
               <Form.Control
                 type="text"
-                onChange={onChange}
+                onChange={onChangeDestination}
                 defaultValue={destination}
               />
             </Form.Group>
@@ -55,7 +90,7 @@ function Validator() {
               <Form.Label>Destination Amount</Form.Label>
               <Form.Control
                 type="number"
-                onChange={onChange}
+                onChange={onChangeDestinationAmount}
                 defaultValue={destinationValue}
               />
             </Form.Group>
@@ -63,7 +98,7 @@ function Validator() {
               <Form.Label>Destination Currency</Form.Label>
               <Form.Control
                 type="text"
-                onChange={onChange}
+                onChange={onChangeDestinationCurrency}
                 defaultValue={destinationCurrency}
               />
             </Form.Group>
@@ -71,12 +106,12 @@ function Validator() {
               <Form.Label>Destination Issuer</Form.Label>
               <Form.Control
                 type="text"
-                onChange={onChange}
+                onChange={onChangeDestinationIssuer}
                 defaultValue={destinationIssuer}
               />
             </Form.Group>
           </Form>
-          <Button variant="primary" onClick={onClick} disabled={loading}>
+          <Button variant="primary" onClick={submit} disabled={loading}>
             { loading ? <i className="fas fa-spin fa-spinner" /> : "Submit" }
           </Button>
         </div>
