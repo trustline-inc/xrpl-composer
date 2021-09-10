@@ -5,6 +5,7 @@ import {
   Route,
   NavLink
 } from "react-router-dom"
+import Home from "./pages/Home"
 import Explorer from "./pages/Explorer"
 import Builder from "./pages/Builder"
 import Validator from "./pages/Validator"
@@ -16,7 +17,7 @@ function App() {
       <Router>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <div className="container-fluid">
-            <a className="navbar-brand" href="/#">
+            <a className="navbar-brand" href="/">
               RippleGraph
             </a>
             <>
@@ -41,7 +42,7 @@ function App() {
         </nav>
         <Switch>
           <Route exact path="/">
-            <Explorer />
+            <Home />
           </Route>
           <Route path="/explorer">
             <Explorer />
