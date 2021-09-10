@@ -2,76 +2,46 @@ import React from "react";
 import {
   HashRouter as Router,
   Switch,
-  Route,
-  NavLink
+  Route
 } from "react-router-dom"
-import { Badge } from "react-bootstrap"
 import Home from "./pages/Home"
 import Explorer from "./pages/Explorer"
 import Builder from "./pages/Builder"
 import Validator from "./pages/Validator"
+import DataContext from "./context/DataContext"
+import Navbar from "./components/Navbar"
 import './App.css';
 
 function App() {
-  const download = () => {
-    const exportData = []
-    if (localStorage.getItem("graph")) exportData.push("graph")
-    if (localStorage.getItem("config")) exportData.push("config")
-    exportData.forEach(type => {
-      const data = JSON.stringify(localStorage.getItem(type))
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(data);
-      const downloadAnchorNode = document.createElement('a');
-      downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", type + ".json");
-      document.body.appendChild(downloadAnchorNode); // Required for Firefox
-      downloadAnchorNode.click();
-      downloadAnchorNode.remove();
-    })
-  }
+  const [data, setData] = React.useState({
+    config: JSON.parse(localStorage.getItem("config")),
+    graph: JSON.parse(localStorage.getItem("graph"))
+  });
+  const value = React.useMemo(
+    () => ({ data, setData }),
+    [data]
+  );
   return (
     <div className="App">
-      <Router>
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <div className="container-fluid">
-            <a className="navbar-brand" href="/">
-              RippleGraph <Badge bg="primary" pill>BETA</Badge>
-            </a>
-            <>
-              <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-              </button>
-              <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li className="nav-item">
-                    <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/explorer">Explorer</NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/builder">Builder</NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
-                  </li>
-                </ul>
-                <button className="btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={!localStorage.getItem("config") || !localStorage.getItem("graph")}>Download</button>
-              </div>
-            </>
-          </div>
-        </nav>
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/explorer">
-            <Explorer />
-          </Route>
-          <Route path="/builder">
-            <Builder />
-          </Route>
-          <Route path="/validator">
-            <Validator />
-          </Route>
-        </Switch>
-      </Router>
+      <DataContext.Provider value={value}>
+        <Router>
+          <Navbar data={data} />
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route path="/explorer">
+              <Explorer />
+            </Route>
+            <Route path="/builder">
+              <Builder />
+            </Route>
+            <Route path="/validator">
+              <Validator />
+            </Route>
+          </Switch>
+        </Router>
+      </DataContext.Provider>
     </div>
   );
 }

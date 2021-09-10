@@ -8,7 +8,7 @@ import {
   makePayment
 } from "./xrpl"
 
-const saved = window.localStorage.getItem("graph")
+const saved = localStorage.getItem("graph")
 const graph = Graph(JSON.parse(saved));
 
 /**
@@ -17,7 +17,7 @@ const graph = Graph(JSON.parse(saved));
  */
 export async function createNode(data) {
   const { id, defaultRipple } = data;
-  let config = window.localStorage.getItem("config")
+  let config = localStorage.getItem("config")
 
   if (!config) {
     config = {}
@@ -30,13 +30,13 @@ export async function createNode(data) {
     if (!defaultRipple) await enableRippling(account)
     config[id] = { account, ...data }
     const newConfig = JSON.stringify(config, null, 2);
-    window.localStorage.setItem("config", newConfig)
+    localStorage.setItem("config", newConfig)
     console.log(`${id}:`, account.address)
   } else {
     throw Error("An account with this ID already exists.")
   }
   graph.addNode(id);
-  window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
+  localStorage.setItem("graph", JSON.stringify(graph.serialize()))
 }
 
 /**
@@ -46,7 +46,7 @@ export async function createNode(data) {
  * @param {*} limit 
  */
 export async function createEdge(source, target, limit) {
-  let config = window.localStorage.getItem("config")
+  let config = localStorage.getItem("config")
 
   if (!config) {
     config = {}
@@ -59,7 +59,7 @@ export async function createEdge(source, target, limit) {
   }
   graph.addEdge(source, target);
   graph.setEdgeWeight(source, target, 0)
-  window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
+  localStorage.setItem("graph", JSON.stringify(graph.serialize()))
 }
 
 /**
@@ -67,16 +67,16 @@ export async function createEdge(source, target, limit) {
  * @param {*} id 
  */
 export async function removeNode(id) {
-  let config = JSON.parse(window.localStorage.getItem("config"))
+  let config = JSON.parse(localStorage.getItem("config"))
   await deleteAccount(config[id].account)
   const edges = graph.adjacent(id)
   edges.forEach(edge => {
     graph.removeEdge(id, edge)
   })
   graph.removeNode(id)
-  window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
+  localStorage.setItem("graph", JSON.stringify(graph.serialize()))
   delete config[id]
-  window.localStorage.setItem("config", JSON.stringify(config))
+  localStorage.setItem("config", JSON.stringify(config))
 }
 
 /**

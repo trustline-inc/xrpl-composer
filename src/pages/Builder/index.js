@@ -6,31 +6,32 @@ import CreateNodeModal from "../../components/CreateNodeModal";
 import CreateTrustLineModal from "../../components/CreateTrustLineModal";
 import { api, getTrustLines, blackhole } from "../../xrpl"
 import { removeNode } from "../../graph"
+import DataContext from "../../context/DataContext"
 import "./index.css"
 
 function Builder() {
   const history = useHistory();
   const inputRef = React.useRef()
   const { path } = useRouteMatch();
+  const { data, setData } = React.useContext(DataContext)
   const [importType, setImportType] = React.useState()
   const [selectedNode, setSelectedNode] = React.useState(undefined)
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
   const [showCreateNodeModal, setShowNodeModal] = React.useState(false);
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
-  const [config, setConfig] = React.useState(JSON.parse(localStorage.getItem("config")) || {});
-  const hasAccounts = Object.keys(config).length !== 0
+  const hasAccounts = Object.keys(data.config).length !== 0
   const location = useLocation();
 
   const handleCloseCreateNodeModal = () => {
     setShowNodeModal(false);
-    setConfig(JSON.parse(localStorage.getItem("config")))
+    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
   const handleShowNodeModal = () => setShowNodeModal(true);
 
   const handleCloseTrustLineModal = () => {
     setShowTrustLineModal(false);
-    setConfig(JSON.parse(localStorage.getItem("config")))
+    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
   const handleShowTrustLineModal = () => setShowTrustLineModal(true);
 
@@ -58,15 +59,15 @@ function Builder() {
     const result = JSON.parse(JSON.parse(event.target.result));
     localStorage.setItem(importType, JSON.stringify(result))
     if (importType === "config")
-      setConfig(JSON.parse(localStorage.getItem("config")))
+    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
 
   const blackholeAccount = async () => {
     setShowLoadingModal(true)
-    await blackhole(config[selectedNode].account)
-    config[selectedNode].blackholed = true
-    localStorage.setItem("config", JSON.stringify(config))
-    setConfig(config)
+    await blackhole(data.Buttonconfig[selectedNode].account)
+    data.Buttonconfig[selectedNode].blackholed = true
+    localStorage.setItem("config", JSON.stringify(data.config))
+    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
     setShowLoadingModal(false)
   }
 
@@ -77,14 +78,14 @@ function Builder() {
    */
   React.useEffect(() => {
     (async () => {
-      if (selectedNode && config[selectedNode]) {
+      if (selectedNode && data.config[selectedNode]) {
         await api.connect()
-        const trustLines = await getTrustLines(config[selectedNode].account.address)
+        const trustLines = await getTrustLines(data.config[selectedNode].account.address)
         setAccountTrustLines(trustLines)
         await api.disconnect()
       }
     })()
-  }, [selectedNode, config])
+  }, [selectedNode, data.config])
 
   /**
    * Check if a node is already selected on page load
@@ -107,7 +108,7 @@ function Builder() {
           <ListGroup as="ul">
             {
               hasAccounts ? (
-                Object.keys(config).map(id => (
+                Object.keys(data.config).map(id => (
                   <ListGroup.Item as="li" active={location.pathname === `/builder/${id}`} key={id} onClick={() => { setSelectedNode(id); history.push(`/builder/${id}`) }}>
                     {id}
                   </ListGroup.Item>
@@ -155,7 +156,7 @@ function Builder() {
             <Route path={`${path}/:nodeId`}>
               <h5>Account</h5>
                 <pre>
-                  {JSON.stringify(config[selectedNode], null, 2)}
+                  {JSON.stringify(data.config[selectedNode], null, 2)}
                 </pre>
               <h5 className="mt-5">Trust Lines</h5>
               {
