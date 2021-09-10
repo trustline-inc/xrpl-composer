@@ -14,15 +14,17 @@ import './App.css';
 
 function App() {
   const download = () => {
-    const exportName = "graph"
-    const data = JSON.stringify(localStorage.getItem("graph"))
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(data);
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", exportName + ".json");
-    document.body.appendChild(downloadAnchorNode); // Required for Firefox
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+    const exportData = ["graph", "accounts"]
+    exportData.forEach(type => {
+      const data = JSON.stringify(localStorage.getItem(type))
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(data);
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", type + ".json");
+      document.body.appendChild(downloadAnchorNode); // Required for Firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    })
   }
   return (
     <div className="App">

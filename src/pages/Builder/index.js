@@ -10,7 +10,9 @@ import "./index.css"
 
 function Builder() {
   const history = useHistory();
+  const inputRef = React.useRef()
   const { path } = useRouteMatch();
+  const [importType, setImportType] = React.useState()
   const [selectedNode, setSelectedNode] = React.useState(undefined)
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
   const [showCreateNodeModal, setShowNodeModal] = React.useState(false);
@@ -34,6 +36,27 @@ function Builder() {
 
   const goToValidator = () => {
     history.push(`/validator?account=${selectedNode}`);
+  }
+
+  const importGraph = () => {
+    setImportType("graph")
+    inputRef.current.click()
+  }
+
+  const importAccounts = () => {
+    setImportType("accounts")
+    inputRef.current.click()
+  }
+
+  const fileUploadInputChange = (event) => {
+    const reader = new FileReader();
+    reader.onload = onReaderLoad;
+    reader.readAsText(event.target.files[0]);
+  }
+
+  function onReaderLoad(event) {
+    const result = JSON.parse(JSON.parse(event.target.result));
+    localStorage.setItem(importType, result)
   }
 
   const blackholeAccount = async () => {
@@ -92,10 +115,30 @@ function Builder() {
               )
             }
           </ListGroup>
-          <div className="d-grid gap-2">
-            <Button variant="secondary" className="mt-5" onClick={handleShowNodeModal}>
-              Create Node
-            </Button>
+          <div className="row">
+            <div className="d-grid gap-1 col-6">
+              <Button variant="secondary" className="mt-5" onClick={handleShowNodeModal}>
+                Create Node
+              </Button>
+            </div>
+            <div className="col-6">
+              <div className="d-grid gap-1">
+                <input type="file" hidden ref={inputRef} onChange={fileUploadInputChange} />
+                <Button variant="secondary" className="mt-5" onClick={importGraph}>
+                  Import Graph
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-6">
+              <div className="d-grid gap-1">
+                <input type="file" hidden ref={inputRef} onChange={fileUploadInputChange} />
+                <Button variant="secondary" className="mt-5" onClick={importAccounts}>
+                  Import Accounts
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
         <div className="col-md-6 bg-light px-5 py-5">
