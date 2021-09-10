@@ -14,7 +14,9 @@ import './App.css';
 
 function App() {
   const download = () => {
-    const exportData = ["graph", "config"]
+    const exportData = []
+    if (localStorage.getItem("graph")) exportData.push("graph")
+    if (localStorage.getItem("config")) exportData.push("config")
     exportData.forEach(type => {
       const data = JSON.stringify(localStorage.getItem(type))
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(data);
@@ -50,7 +52,7 @@ function App() {
                     <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
                   </li>
                 </ul>
-                <button className="btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download}>Download</button>
+                <button className="btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={!localStorage.getItem("config") || !localStorage.getItem("graph")}>Download</button>
               </div>
             </>
           </div>
