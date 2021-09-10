@@ -8,8 +8,7 @@ function CreateNodeModal({ show, handleClose }) {
   const [data, setData] = React.useState({
     id: "",
     defaultRipple: false,
-    blackholed: false,
-    weight: 0
+    blackholed: false
   })
 
   const onChangeInput = (event) => {
