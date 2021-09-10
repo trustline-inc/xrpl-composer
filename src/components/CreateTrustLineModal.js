@@ -3,7 +3,7 @@ import { Button, Form, Modal, FloatingLabel, InputGroup, FormControl } from "rea
 import { createEdge } from "../graph"
 
 function CreateTrustLineModal({ show, handleClose, selectedNode }) {
-  const accounts = JSON.parse(localStorage.getItem("accounts")) || {}
+  const config = JSON.parse(localStorage.getItem("config")) || {}
   const [loading, setLoading] = React.useState(false)
   const [target, setTarget] = React.useState()
   const [limit, setLimit] = React.useState(0)
@@ -42,7 +42,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
                 <option>Select a target node</option>
                 {
                   (() => {
-                    return Object.keys(accounts).map(account => (
+                    return Object.keys(config).map(account => (
                       <option key={account} value={account}>{account}</option>
                     ))
                   })()

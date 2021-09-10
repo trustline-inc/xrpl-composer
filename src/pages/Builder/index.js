@@ -18,19 +18,19 @@ function Builder() {
   const [showCreateNodeModal, setShowNodeModal] = React.useState(false);
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
-  const [accounts, setAccounts] = React.useState(JSON.parse(localStorage.getItem("accounts")) || {});
-  const hasAccounts = Object.keys(accounts).length !== 0
+  const [config, setConfig] = React.useState(JSON.parse(localStorage.getItem("config")) || {});
+  const hasAccounts = Object.keys(config).length !== 0
   const location = useLocation();
 
   const handleCloseCreateNodeModal = () => {
     setShowNodeModal(false);
-    setAccounts(JSON.parse(localStorage.getItem("accounts")))
+    setConfig(JSON.parse(localStorage.getItem("config")))
   }
   const handleShowNodeModal = () => setShowNodeModal(true);
 
   const handleCloseTrustLineModal = () => {
     setShowTrustLineModal(false);
-    setAccounts(JSON.parse(localStorage.getItem("accounts")))
+    setConfig(JSON.parse(localStorage.getItem("config")))
   }
   const handleShowTrustLineModal = () => setShowTrustLineModal(true);
 
@@ -43,8 +43,8 @@ function Builder() {
     inputRef.current.click()
   }
 
-  const importAccounts = () => {
-    setImportType("accounts")
+  const importConfig = () => {
+    setImportType("config")
     inputRef.current.click()
   }
 
@@ -57,16 +57,16 @@ function Builder() {
   function onReaderLoad(event) {
     const result = JSON.parse(JSON.parse(event.target.result));
     localStorage.setItem(importType, JSON.stringify(result))
-    if (importType === "accounts")
-      setAccounts(JSON.parse(localStorage.getItem("accounts")))
+    if (importType === "config")
+      setConfig(JSON.parse(localStorage.getItem("config")))
   }
 
   const blackholeAccount = async () => {
     setShowLoadingModal(true)
-    await blackhole(accounts[selectedNode].account)
-    accounts[selectedNode].blackholed = true
-    localStorage.setItem("accounts", JSON.stringify(accounts))
-    setAccounts(accounts)
+    await blackhole(config[selectedNode].account)
+    config[selectedNode].blackholed = true
+    localStorage.setItem("config", JSON.stringify(config))
+    setConfig(config)
     setShowLoadingModal(false)
   }
 
@@ -77,14 +77,14 @@ function Builder() {
    */
   React.useEffect(() => {
     (async () => {
-      if (selectedNode && accounts[selectedNode]) {
+      if (selectedNode && config[selectedNode]) {
         await api.connect()
-        const trustLines = await getTrustLines(accounts[selectedNode].account.address)
+        const trustLines = await getTrustLines(config[selectedNode].account.address)
         setAccountTrustLines(trustLines)
         await api.disconnect()
       }
     })()
-  }, [selectedNode, accounts])
+  }, [selectedNode, config])
 
   /**
    * Check if a node is already selected on page load
@@ -107,7 +107,7 @@ function Builder() {
           <ListGroup as="ul">
             {
               hasAccounts ? (
-                Object.keys(accounts).map(id => (
+                Object.keys(config).map(id => (
                   <ListGroup.Item as="li" active={location.pathname === `/builder/${id}`} key={id} onClick={() => { setSelectedNode(id); history.push(`/builder/${id}`) }}>
                     {id}
                   </ListGroup.Item>
@@ -138,8 +138,8 @@ function Builder() {
             <div className="col-6">
               <div className="d-grid gap-1">
                 <input type="file" hidden ref={inputRef} onChange={fileUploadInputChange} />
-                <Button variant="secondary" className="mt-3" onClick={importAccounts}>
-                  Import Accounts
+                <Button variant="secondary" className="mt-3" onClick={importConfig}>
+                  Import Config
                 </Button>
               </div>
             </div>
@@ -155,7 +155,7 @@ function Builder() {
             <Route path={`${path}/:nodeId`}>
               <h5>Account</h5>
                 <pre>
-                  {JSON.stringify(accounts[selectedNode], null, 2)}
+                  {JSON.stringify(config[selectedNode], null, 2)}
                 </pre>
               <h5 className="mt-5">Trust Lines</h5>
               {

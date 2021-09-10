@@ -17,20 +17,20 @@ const graph = Graph(JSON.parse(saved));
  */
 export async function createNode(data) {
   const { id, defaultRipple } = data;
-  let accounts = window.localStorage.getItem("accounts")
+  let config = window.localStorage.getItem("config")
 
-  if (!accounts) {
-    accounts = {}
+  if (!config) {
+    config = {}
   } else {
-    accounts = JSON.parse(accounts)
+    config = JSON.parse(config)
   }
 
-  if (!accounts[id]) {
+  if (!config[id]) {
     const account = await createAccount()
     if (!defaultRipple) await enableRippling(account)
-    accounts[id] = { account, ...data }
-    const newAccounts = JSON.stringify(accounts, null, 2);
-    window.localStorage.setItem("accounts", newAccounts)
+    config[id] = { account, ...data }
+    const newConfig = JSON.stringify(config, null, 2);
+    window.localStorage.setItem("config", newConfig)
     console.log(`${id}:`, account.address)
   } else {
     throw Error("An account with this ID already exists.")
@@ -46,16 +46,16 @@ export async function createNode(data) {
  * @param {*} limit 
  */
 export async function createEdge(source, target, limit) {
-  let accounts = window.localStorage.getItem("accounts")
+  let config = window.localStorage.getItem("config")
 
-  if (!accounts) {
-    accounts = {}
+  if (!config) {
+    config = {}
   } else {
-    accounts = JSON.parse(accounts)
+    config = JSON.parse(config)
   }
 
-  if (!await hasTrustLine(accounts[source].account.address, accounts[target].account.address)) {
-    await createTrustLine(accounts[source].account, accounts[target].account.address)
+  if (!await hasTrustLine(config[source].account.address, config[target].account.address)) {
+    await createTrustLine(config[source].account, config[target].account.address)
   }
   graph.addEdge(source, target);
   graph.setEdgeWeight(source, target, 0)
@@ -67,16 +67,16 @@ export async function createEdge(source, target, limit) {
  * @param {*} id 
  */
 export async function removeNode(id) {
-  let accounts = JSON.parse(window.localStorage.getItem("accounts"))
-  await deleteAccount(accounts[id].account)
+  let config = JSON.parse(window.localStorage.getItem("config"))
+  await deleteAccount(config[id].account)
   const edges = graph.adjacent(id)
   edges.forEach(edge => {
     graph.removeEdge(id, edge)
   })
   graph.removeNode(id)
   window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
-  delete accounts[id]
-  window.localStorage.setItem("accounts", JSON.stringify(accounts))
+  delete config[id]
+  window.localStorage.setItem("config", JSON.stringify(config))
 }
 
 /**

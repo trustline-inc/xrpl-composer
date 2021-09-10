@@ -14,7 +14,7 @@ import './App.css';
 
 function App() {
   const download = () => {
-    const exportData = ["graph", "accounts"]
+    const exportData = ["graph", "config"]
     exportData.forEach(type => {
       const data = JSON.stringify(localStorage.getItem(type))
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(data);

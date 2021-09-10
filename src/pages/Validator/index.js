@@ -19,7 +19,7 @@ function Validator() {
   const [sendMaxValue, setSendMaxValue] = React.useState(1)
   const [sendMaxIssuer, setSendMaxIssuer] = React.useState("")
   const [destination, setDestination] = React.useState("")
-  const accounts = JSON.parse(localStorage.getItem("accounts"))
+  const config = JSON.parse(localStorage.getItem("config"))
   const [paths, setPaths] = React.useState()
 
   React.useEffect(() => {
@@ -30,17 +30,17 @@ function Validator() {
       if (account && destination && destinationIssuer && sendMaxIssuer)
       ws.send(JSON.stringify({
         command: "path_find",
-        destination_account: accounts[destination].account.address,
+        destination_account: config[destination].account.address,
         destination_amount: {
           value: destinationValue,
           currency: destinationCurrency,
-          issuer: accounts[destinationIssuer].account.address
+          issuer: config[destinationIssuer].account.address
         },
         currency: "AUR",
-        issuer: accounts[destinationIssuer].account.address,
+        issuer: config[destinationIssuer].account.address,
         value: "1",
         id: 8,
-        source_account: accounts[account].account.address,
+        source_account: config[account].account.address,
         subcommand: "create"
       }))
     }
@@ -57,19 +57,19 @@ function Validator() {
     return () => {
       ws.close()
     }
-  }, [account, destination, destinationIssuer, sendMaxIssuer, accounts, destinationCurrency, destinationValue])
+  }, [account, destination, destinationIssuer, sendMaxIssuer, config, destinationCurrency, destinationValue])
 
   const submit = async () => {
     setLoading(true)
     const amount = {
       currency: destinationCurrency,
-      issuer: accounts[destinationIssuer].account.address,
+      issuer: config[destinationIssuer].account.address,
       value: destinationValue.toString()
     }
     await api.connect()
     const response = await updateEdges(
-      accounts[account].account,
-      accounts[destination].account.address,
+      config[account].account,
+      config[destination].account.address,
       amount
     )
     alert(JSON.stringify(response))
