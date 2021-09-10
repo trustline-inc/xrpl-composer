@@ -27,7 +27,7 @@ function Validator() {
     const ws = new WebSocket(WEBSOCKET_SERVER)
 
     ws.onopen = () => {
-      if (account && destination && destinationIssuer)
+      if (account && destination && destinationIssuer && sendMaxIssuer)
       ws.send(JSON.stringify({
         command: "path_find",
         destination_account: accounts[destination].account.address,
@@ -57,7 +57,7 @@ function Validator() {
     return () => {
       ws.close()
     }
-  }, [])
+  }, [account, destination, destinationIssuer, sendMaxIssuer])
 
   const submit = async () => {
     setLoading(true)
@@ -144,7 +144,7 @@ function Validator() {
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Issuer</Form.Label>
-                <Form.Control type="number" onChange={onChangeSendMaxIssuer} defaultValue={sendMaxIssuer} />
+                <Form.Control type="text" onChange={onChangeSendMaxIssuer} defaultValue={sendMaxIssuer} />
               </Form.Group>
             </Row>
             <h4>Destination</h4>
@@ -165,7 +165,7 @@ function Validator() {
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Destination Issuer</Form.Label>
-                <Form.Control type="number" onChange={onChangeDestinationIssuer} defaultValue={destinationIssuer} />
+                <Form.Control type="text" onChange={onChangeDestinationIssuer} defaultValue={destinationIssuer} />
               </Form.Group>
             </Row>
           </Form>
