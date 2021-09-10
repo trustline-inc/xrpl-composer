@@ -1,9 +1,10 @@
 import React from "react";
 import { Switch, Route, useRouteMatch, useLocation, useHistory } from "react-router-dom";
 import { Button, ListGroup } from "react-bootstrap"
+import LoadingModal from "../../components/LoadingModal";
 import CreateNodeModal from "../../components/CreateNodeModal";
 import CreateTrustLineModal from "../../components/CreateTrustLineModal";
-import { api, getTrustLines } from "../../xrpl"
+import { api, getTrustLines, blackhole } from "../../xrpl"
 import { removeNode } from "../../graph"
 import "./index.css"
 
@@ -11,6 +12,7 @@ function Builder() {
   const history = useHistory();
   const { path } = useRouteMatch();
   const [selectedNode, setSelectedNode] = React.useState(undefined)
+  const [showLoadingModal, setShowLoadingModal] = React.useState(false);
   const [showCreateNodeModal, setShowNodeModal] = React.useState(false);
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
@@ -34,12 +36,23 @@ function Builder() {
     history.push(`/validator?account=${selectedNode}`);
   }
 
+  const blackholeAccount = async () => {
+    setShowLoadingModal(true)
+    await blackhole(accounts[selectedNode].account)
+    accounts[selectedNode].blackholed = true
+    localStorage.setItem("accounts", JSON.stringify(accounts))
+    setAccounts(accounts)
+    setShowLoadingModal(false)
+  }
+
+  const handleCloseLoadingModal = () => setShowLoadingModal(false)
+
   /**
    * Fetch node info when selected
    */
   React.useEffect(() => {
     (async () => {
-      if (selectedNode) {
+      if (selectedNode && accounts[selectedNode]) {
         await api.connect()
         const trustLines = await getTrustLines(accounts[selectedNode].account.address)
         setAccountTrustLines(trustLines)
@@ -59,6 +72,7 @@ function Builder() {
 
   return (
     <div className="container-fluid mt-5">
+      <LoadingModal show={showLoadingModal} handleClose={handleCloseLoadingModal} />
       <CreateNodeModal show={showCreateNodeModal} handleClose={handleCloseCreateNodeModal} />
       <CreateTrustLineModal show={showTrustLineModal} handleClose={handleCloseTrustLineModal} selectedNode={selectedNode} />
       <div className="row">
@@ -118,12 +132,17 @@ function Builder() {
           </div>
           <div className="d-grid gap-2">
             <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={goToValidator}>
-            Send Payment
+              Send Payment
+            </Button>
+          </div>
+          <div className="d-grid gap-2">
+            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={blackholeAccount}>
+              Blackhole Account
             </Button>
           </div>
           <div className="d-grid gap-2">
             <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={() => { removeNode(selectedNode) }}>
-            Delete Account
+              Delete Account
             </Button>
           </div>
         </div>

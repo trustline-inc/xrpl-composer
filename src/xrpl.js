@@ -29,6 +29,28 @@ export async function createAccount() {
   return address
 }
 
+export async function blackhole(account) {
+  const ACCOUNT_ONE = "rrrrrrrrrrrrrrrrrrrrBZbvji";
+  const preparedTx = await api.prepareSettings(account.xAddress, {
+    regularKey: ACCOUNT_ONE,
+    disableMasterKey: true,
+    defaultRipple: true
+  });
+  const latestLedgerVersion = await api.getLedgerVersion();
+  const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion;
+  const response = api.sign(preparedTx.txJSON, account.secret);
+  const txID = response.id;
+  const txBlob = response.signedTransaction;
+  const result = await api.submit(txBlob);
+  console.log(result)
+  const earliestLedgerVersion = latestLedgerVersion + 1;
+  return await validateTransaction(
+    txID,
+    earliestLedgerVersion,
+    maxLedgerVersion
+  );
+}
+
 export async function hasTrustLine(address, counterparty) {
   const trustlines = await api.getTrustlines(address)
   return trustlines.some(trustline => trustline.specification.counterparty === counterparty)
