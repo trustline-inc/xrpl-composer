@@ -11,6 +11,10 @@ import {
 const saved = window.localStorage.getItem("graph")
 const graph = Graph(JSON.parse(saved));
 
+/**
+ * @function createNode
+ * @param {*} data 
+ */
 export async function createNode(data) {
   const { id, defaultRipple } = data;
   let accounts = window.localStorage.getItem("accounts")
@@ -35,6 +39,12 @@ export async function createNode(data) {
   window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
 }
 
+/**
+ * @function createEdge
+ * @param {*} source 
+ * @param {*} target 
+ * @param {*} limit 
+ */
 export async function createEdge(source, target, limit) {
   let accounts = window.localStorage.getItem("accounts")
 
@@ -52,6 +62,10 @@ export async function createEdge(source, target, limit) {
   window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
 }
 
+/**
+ * @function removeNode
+ * @param {*} id 
+ */
 export async function removeNode(id) {
   let accounts = JSON.parse(window.localStorage.getItem("accounts"))
   await deleteAccount(accounts[id].account)
@@ -65,6 +79,13 @@ export async function removeNode(id) {
   window.localStorage.setItem("accounts", JSON.stringify(accounts))
 }
 
+/**
+ * @function updateEdges
+ * @param {*} source 
+ * @param {*} destination 
+ * @param {*} amount 
+ * @returns 
+ */
 export async function updateEdges(source, destination, amount) {
   const tx = await makePayment(source, destination, amount)
   // Update edges based on the result
