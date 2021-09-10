@@ -57,7 +57,7 @@ function Validator() {
     return () => {
       ws.close()
     }
-  }, [account, destination, destinationIssuer, sendMaxIssuer])
+  }, [account, destination, destinationIssuer, sendMaxIssuer, accounts, destinationCurrency, destinationValue])
 
   const submit = async () => {
     setLoading(true)
