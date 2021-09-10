@@ -14,19 +14,19 @@ function Builder() {
   const [showCreateNodeModal, setShowNodeModal] = React.useState(false);
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
-  const [accounts, setAccounts] = React.useState(JSON.parse(window.localStorage.getItem("accounts")) || {});
+  const [accounts, setAccounts] = React.useState(JSON.parse(localStorage.getItem("accounts")) || {});
   const hasAccounts = Object.keys(accounts).length !== 0
   const location = useLocation();
 
   const handleCloseCreateNodeModal = () => {
     setShowNodeModal(false);
-    setAccounts(JSON.parse(window.localStorage.getItem("accounts")))
+    setAccounts(JSON.parse(localStorage.getItem("accounts")))
   }
   const handleShowNodeModal = () => setShowNodeModal(true);
 
   const handleCloseTrustLineModal = () => {
     setShowTrustLineModal(false);
-    setAccounts(JSON.parse(window.localStorage.getItem("accounts")))
+    setAccounts(JSON.parse(localStorage.getItem("accounts")))
   }
   const handleShowTrustLineModal = () => setShowTrustLineModal(true);
 
@@ -69,7 +69,7 @@ function Builder() {
             {
               hasAccounts ? (
                 Object.keys(accounts).map(id => (
-                  <ListGroup.Item as="li" active={window.location.pathname === `/builder/${id}`} key={id} onClick={() => { setSelectedNode(id); history.push(`/builder/${id}`) }}>
+                  <ListGroup.Item as="li" active={location.pathname === `/builder/${id}`} key={id} onClick={() => { setSelectedNode(id); history.push(`/builder/${id}`) }}>
                     {id}
                   </ListGroup.Item>
                 ))
@@ -86,6 +86,11 @@ function Builder() {
         </div>
         <div className="col-6 bg-light px-5 py-5">
           <Switch>
+            <Route exact path={path}>
+              <div className="d-flex justify-content-center align-items-center h-100">
+                Select a node to view info.
+              </div>
+            </Route>
             <Route path={`${path}/:nodeId`}>
               <h5>Account</h5>
                 <pre>
