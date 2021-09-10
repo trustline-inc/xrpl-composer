@@ -35,7 +35,7 @@ function CreateNodeModal({ show, handleClose }) {
     await api.disconnect()
     setLoading(false)
     handleClose()
-    setData({ ...data, config: localStorage.getItem("config") })
+    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
 
   return (
