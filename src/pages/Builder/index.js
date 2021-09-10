@@ -3,6 +3,7 @@ import { NavLink, Switch, Route, useRouteMatch, useLocation } from "react-router
 import CreateNodeModal from "../../components/CreateNodeModal";
 import CreateTrustLineModal from "../../components/CreateTrustLineModal";
 import { api, getSettings, getTrustLines } from "../../xrpl"
+import { removeNode } from "../../graph"
 
 function Builder() {
   const { path, url } = useRouteMatch();
@@ -77,7 +78,7 @@ function Builder() {
             Create Node
           </button>
         </div>
-        <div className="col-6">
+        <div className="col-6 bg-light px-5 py-5">
           <Switch>
             <Route path={`${path}/:nodeId`}>
               <h5>Account</h5>
@@ -111,7 +112,7 @@ function Builder() {
           <button type="button" className="btn btn-primary btn-block mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
             Send Payment
           </button>
-          <button type="button" className="btn btn-primary btn-block" disabled={!selectedNode} onClick={() => {}}>
+          <button type="button" className="btn btn-primary btn-block" disabled={!selectedNode} onClick={() => { removeNode(selectedNode) }}>
             Delete Account
           </button>
         </div>

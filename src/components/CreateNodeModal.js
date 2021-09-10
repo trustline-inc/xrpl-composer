@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Form, Modal } from "react-bootstrap"
-import { createAccountNode } from "../graph"
+import { createNode } from "../graph"
+import { api } from "../xrpl"
 
 function CreateNodeModal({ show, handleClose }) {
   const [loading, setLoading] = React.useState(false)
@@ -26,7 +27,9 @@ function CreateNodeModal({ show, handleClose }) {
 
   const handleSave = async () => {
     setLoading(true)
-    await createAccountNode(data)
+    await api.connect()
+    await createNode(data)
+    await api.disconnect()
     setLoading(false)
     handleClose()
   }

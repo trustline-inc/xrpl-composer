@@ -1,10 +1,10 @@
 import Graph from "graph-data-structure";
-import { createAccount, hasTrustLine, createTrustLine, enableRippling } from "./xrpl"
+import { createAccount, hasTrustLine, createTrustLine, enableRippling, deleteAccount } from "./xrpl"
 
 const saved = window.localStorage.getItem("graph")
 const graph = Graph(JSON.parse(saved));
 
-export async function createAccountNode(data) {
+export async function createNode(data) {
   const { id, noRipple } = data;
   let accounts = window.localStorage.getItem("accounts")
 
@@ -28,7 +28,7 @@ export async function createAccountNode(data) {
   window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
 }
 
-export async function createTrustLineEdge(source, target, limit) {
+export async function createEdge(source, target, limit) {
   let accounts = window.localStorage.getItem("accounts")
 
   if (!accounts) {
@@ -43,6 +43,19 @@ export async function createTrustLineEdge(source, target, limit) {
   graph.addEdge(source, target);
   graph.setEdgeWeight(source, target, 0)
   window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
+}
+
+export async function removeNode(id) {
+  let accounts = JSON.parse(window.localStorage.getItem("accounts"))
+  await deleteAccount(accounts[id].account)
+  const edges = graph.adjacent(id)
+  edges.forEach(edge => {
+    graph.removeEdge(id, edge)
+  })
+  graph.removeNode(id)
+  window.localStorage.setItem("graph", JSON.stringify(graph.serialize()))
+  delete accounts[id]
+  window.localStorage.setItem("accounts", JSON.stringify(accounts))
 }
 
 export default graph

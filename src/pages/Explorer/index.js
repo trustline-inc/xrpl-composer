@@ -5,7 +5,7 @@ import './index.css';
 
 const serialized = JSON.parse(window.localStorage.getItem("graph"))
 
-function Graph() {
+function Explorer() {
   const svgRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -279,4 +279,4 @@ function Graph() {
   );
 }
 
-export default Graph;
+export default Explorer;

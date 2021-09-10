@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Form, Modal } from "react-bootstrap"
-import { createTrustLineEdge } from "../graph"
+import { createEdge } from "../graph"
 
 function CreateTrustLineModal({ show, handleClose, selectedNode }) {
   const [loading, setLoading] = React.useState(false)
@@ -8,7 +8,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
   const [limit, setLimit] = React.useState()
 
   const onChangeTarget = (event) => {
-    event.target.value = event.target.value.toUpperCase()
+    event.target.value = event.target.value.toUpperCase().replace(" ", "_").replace(/[\W]+/g, "");
     setTarget(event.target.value)
   }
 
@@ -18,7 +18,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
 
   const handleSave = async () => {
     setLoading(true)
-    await createTrustLineEdge(selectedNode, target, limit)
+    await createEdge(selectedNode, target, limit)
     setLoading(false)
     handleClose()
   }

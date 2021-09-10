@@ -5,8 +5,9 @@ import {
   Route,
   NavLink
 } from "react-router-dom"
+import Explorer from "./pages/Explorer"
 import Builder from "./pages/Builder"
-import Graph from "./pages/Graph"
+import Validator from "./pages/Validator"
 import './App.css';
 
 function App() {
@@ -30,20 +31,26 @@ function App() {
                   <li className="nav-item">
                     <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/builder">Builder</NavLink>
                   </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
+                  </li>
                 </ul>
               </div>
             </>
           </div>
         </nav>
         <Switch>
+          <Route exact path="/">
+            <Explorer />
+          </Route>
           <Route path="/explorer">
-            <Graph />
+            <Explorer />
           </Route>
           <Route path="/builder">
             <Builder />
           </Route>
-          <Route path="/">
-            <Graph />
+          <Route path="/validator">
+            <Validator />
           </Route>
         </Switch>
       </Router>

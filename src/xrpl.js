@@ -127,3 +127,28 @@ export async function getSettings(address) {
  export async function getTrustLines(address) {
   return await api.getTrustlines(address)
 }
+
+export async function deleteAccount(account) {
+  const preparedTx = await api.prepareTransaction({
+    TransactionType: "AccountDelete"
+  })
+  const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion
+  console.log("preparedTx:", preparedTx)
+  console.log("Transaction cost:", preparedTx.instructions.fee, "XRP")
+  console.log("Transaction expires after ledger:", maxLedgerVersion)
+  const response = api.sign(preparedTx.txJSON, account.secret)
+  const txID = response.id
+  console.log("Identifying hash:", txID)
+  const txBlob = response.signedTransaction
+  console.log("Signed blob:", txBlob)
+  const result = await api.submit(txBlob)
+  console.log("Tentative result code:", result.resultCode)
+  console.log("Tentative result message:", result.resultMessage)
+  const latestLedgerVersion = await api.getLedgerVersion()
+  const earliestLedgerVersion = latestLedgerVersion + 1
+  await validateTransaction(
+    txID,
+    earliestLedgerVersion,
+    maxLedgerVersion
+  )
+}
