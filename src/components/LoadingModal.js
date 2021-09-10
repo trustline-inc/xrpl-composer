@@ -1,9 +1,7 @@
 import React from "react";
-import { Button, Form, Modal } from "react-bootstrap"
+import { Modal } from "react-bootstrap"
 
 function LoadingModal({ show, handleClose }) {
-  const [loading, setLoading] = React.useState(false)
-
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header>
