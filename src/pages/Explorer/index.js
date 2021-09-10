@@ -3,9 +3,8 @@ import * as d3 from "d3";
 import * as bootstrap from "bootstrap"
 import './index.css';
 
-const serialized = JSON.parse(localStorage.getItem("graph")) || { nodes: [], links: [] }
-
 function Explorer() {
+  const serialized = JSON.parse(localStorage.getItem("graph")) || { nodes: [], links: [] }
   const svgRef = React.useRef(null);
 
   React.useEffect(() => {
