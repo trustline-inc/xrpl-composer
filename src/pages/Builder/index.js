@@ -121,10 +121,12 @@ function Builder() {
                 Create Node
               </Button>
             </div>
+          </div>
+          <div className="row">
             <div className="col-6">
               <div className="d-grid gap-1">
                 <input type="file" hidden ref={inputRef} onChange={fileUploadInputChange} />
-                <Button variant="secondary" className="mt-5" onClick={importGraph}>
+                <Button variant="secondary" className="mt-3" onClick={importGraph}>
                   Import Graph
                 </Button>
               </div>
@@ -134,7 +136,7 @@ function Builder() {
             <div className="col-6">
               <div className="d-grid gap-1">
                 <input type="file" hidden ref={inputRef} onChange={fileUploadInputChange} />
-                <Button variant="secondary" className="mt-5" onClick={importAccounts}>
+                <Button variant="secondary" className="mt-3" onClick={importAccounts}>
                   Import Accounts
                 </Button>
               </div>
@@ -167,26 +169,46 @@ function Builder() {
           </Switch>
         </div>
         <div className="col-md-3">
-          <h4 className="mb-3">Actions</h4>
-          <div className="d-grid gap-2">
-            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
-              Create Trust Line
-            </Button>
+          <div className="row">
+            <div className="col-6">
+              <h4 className="mb-3 text-center">Actions</h4>
+            </div>
           </div>
-          <div className="d-grid gap-2">
-            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={goToValidator}>
-              Send Payment
-            </Button>
+          <div className="row">
+            <div className="col-6">
+              <div className="d-grid gap-2">
+                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
+                  Create Trust Line
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="d-grid gap-2">
-            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={blackholeAccount}>
-              Blackhole Account
-            </Button>
+          <div className="row">
+            <div className="col-6">
+              <div className="d-grid gap-2">
+                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={goToValidator}>
+                  Send Payment
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="d-grid gap-2">
-            <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={() => { removeNode(selectedNode) }}>
-              Delete Account
-            </Button>
+          <div className="row">
+            <div className="col-6">
+              <div className="d-grid gap-2">
+                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={blackholeAccount}>
+                  Blackhole Account
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-6">
+              <div className="d-grid gap-2">
+                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={() => { removeNode(selectedNode) }}>
+                  Delete Account
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
