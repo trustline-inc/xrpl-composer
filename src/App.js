@@ -14,8 +14,8 @@ import './App.css';
 
 function App() {
   const [data, setData] = React.useState({
-    config: JSON.parse(localStorage.getItem("config")),
-    graph: JSON.parse(localStorage.getItem("graph"))
+    config: JSON.parse(localStorage.getItem("config")) || {},
+    graph: JSON.parse(localStorage.getItem("graph")) || {}
   });
   const value = React.useMemo(
     () => ({ data, setData }),
