@@ -49,11 +49,11 @@ function CreateNodeModal({ show, handleClose }) {
             <Form.Label>Identifier</Form.Label>
             <Form.Control type="text" onChange={onChangeInput} name="id" />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="node.defaultRipple">
+          <Form.Group className="mb-3">
             <Form.Check
               name="defaultRipple"
               type="checkbox"
-              label={"No Ripple"}
+              label={"Enable Default Ripple"}
               onChange={onChangeCheckbox}
             />
           </Form.Group>

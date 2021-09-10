@@ -64,7 +64,7 @@ function Builder() {
 
   const blackholeAccount = async () => {
     setShowLoadingModal(true)
-    await blackhole(data.Buttonconfig[selectedNode].account)
+    await blackhole(data.config[selectedNode].account)
     data.config[selectedNode].blackholed = true
     localStorage.setItem("config", JSON.stringify(data.config))
     setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
