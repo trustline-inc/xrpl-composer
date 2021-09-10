@@ -45,7 +45,7 @@ function Navbar() {
                   <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
                 </li>
               </ul>
-              <button className="btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={!data.config && !data.graph}>Download</button>
+              <button className="btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={Object.keys(data.config).length === 0 && Object.keys(data.graph).length === 0}>Download</button>
             </div>
           </>
         </div>
