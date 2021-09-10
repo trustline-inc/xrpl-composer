@@ -102,7 +102,7 @@ export async function validateTransaction(
         })
         clearInterval(checkTransaction)
         if (tx.outcome.result !== "tesSUCCESS") resolve(false)
-        resolve(true)
+        resolve(tx)
       } catch (error) {
         const message =
           "Transaction has not been validated yet; try again later"

@@ -66,7 +66,10 @@ export async function removeNode(id) {
 }
 
 export async function updateEdges(source, destination, amount) {
-  return await makePayment(source, destination, amount)
+  const tx = await makePayment(source, destination, amount)
+  // Update edges based on the result
+  console.log(tx)
+  return tx
 }
 
 export default graph
