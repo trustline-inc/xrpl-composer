@@ -5,6 +5,7 @@ import {
   Route,
   NavLink
 } from "react-router-dom"
+import { Badge } from "react-bootstrap"
 import Home from "./pages/Home"
 import Explorer from "./pages/Explorer"
 import Builder from "./pages/Builder"
@@ -18,7 +19,7 @@ function App() {
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <div className="container-fluid">
             <a className="navbar-brand" href="/">
-              RippleGraph
+              RippleGraph <Badge bg="primary" pill>BETA</Badge>
             </a>
             <>
               <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
