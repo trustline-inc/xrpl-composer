@@ -28,7 +28,7 @@ export async function createNode(data) {
   if (!accounts[id]) {
     const account = await createAccount()
     if (!defaultRipple) await enableRippling(account)
-    accounts[id] = { account, defaultRipple, blackholed: false }
+    accounts[id] = { account, ...data }
     const newAccounts = JSON.stringify(accounts, null, 2);
     window.localStorage.setItem("accounts", newAccounts)
     console.log(`${id}:`, account.address)
