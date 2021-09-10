@@ -271,7 +271,7 @@ function Explorer() {
     }
 
     return () => { d3.selectAll("svg > *").remove(); }
-  }, [])
+  }, [serialized.links, serialized.nodes])
 
   return (
     <svg ref={svgRef} width="100vw" height="100vh" className="Graph" />
