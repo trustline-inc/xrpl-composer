@@ -20,6 +20,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
     setLoading(true)
     await createEdge(selectedNode, target, limit)
     setLoading(false)
+    setLimit(0)
     handleClose()
   }
 
