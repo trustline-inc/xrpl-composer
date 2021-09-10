@@ -57,6 +57,8 @@ function Builder() {
   function onReaderLoad(event) {
     const result = JSON.parse(JSON.parse(event.target.result));
     localStorage.setItem(importType, JSON.stringify(result))
+    if (importType === "accounts")
+      setAccounts(JSON.parse(localStorage.getItem("accounts")))
   }
 
   const blackholeAccount = async () => {
