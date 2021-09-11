@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom"
-import { Badge } from "react-bootstrap"
+import { Badge, Container, Nav, Navbar as Navigation } from "react-bootstrap"
 import DataContext from "../context/DataContext"
 
 function Navbar() {
@@ -24,32 +24,22 @@ function Navbar() {
 
   return (
     <div className="Navbar">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="/">
-            RippleGraph <Badge bg="primary" pill>BETA</Badge>
-          </a>
-          <>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/explorer">Explorer</NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/builder">Builder</NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
-                </li>
-              </ul>
-              <button className="btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={Object.keys(data.config).length === 0 && Object.keys(data.graph).length === 0}>Download</button>
-            </div>
-          </>
-        </div>
-      </nav>
+      <Navigation bg="light" expand="lg">
+        <Container fluid>
+          <Navigation.Brand href="/">RippleGraph <Badge bg="primary" pill>BETA</Badge></Navigation.Brand>
+          <Navigation.Toggle aria-controls="menu" />
+          <Navigation.Collapse id="menu">
+            <Nav className="me-auto">
+              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/explorer">Explorer</NavLink>
+              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/builder">Builder</NavLink>
+              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
+            </Nav>
+            <Nav>
+              <button className="ml-auto btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={Object.keys(data.config).length === 0 && Object.keys(data.graph).length === 0}>Download</button>
+            </Nav>
+          </Navigation.Collapse>
+        </Container>
+      </Navigation>
     </div>
   );
 }
