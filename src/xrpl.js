@@ -152,7 +152,8 @@ export async function getSettings(address) {
 
 export async function deleteAccount(account) {
   const preparedTx = await api.prepareTransaction({
-    TransactionType: "AccountDelete"
+    TransactionType: "AccountDelete",
+    Account: account.address
   })
   const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion
   console.log("preparedTx:", preparedTx)

@@ -68,7 +68,8 @@ export async function createEdge(source, target, limit) {
  */
 export async function removeNode(id) {
   let config = JSON.parse(localStorage.getItem("config"))
-  await deleteAccount(config[id].account)
+  // @todo: #2 Fix error `Rippled: Submit Failed`
+  // await deleteAccount(config[id].account)
   const edges = graph.adjacent(id)
   edges.forEach(edge => {
     graph.removeEdge(id, edge)

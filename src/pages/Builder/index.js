@@ -71,6 +71,17 @@ function Builder() {
     setShowLoadingModal(false)
   }
 
+  const deleteAccount = async () => {
+    await removeNode(selectedNode)
+    setData({
+      config: JSON.parse(localStorage.getItem("config")),
+      accounts: JSON.parse(localStorage.getItem("accounts"))
+    })
+    setSelectedNode(undefined)
+    setAccountTrustLines(undefined)
+    history.push("/builder")
+  }
+
   const handleCloseLoadingModal = () => setShowLoadingModal(false)
 
   /**
@@ -207,7 +218,7 @@ function Builder() {
           <div className="row">
             <div className="col-6">
               <div className="d-grid gap-2">
-                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={() => { removeNode(selectedNode) }}>
+                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={deleteAccount}>
                   Delete Account
                 </Button>
               </div>
