@@ -50,6 +50,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
               </Form.Control>
             </FloatingLabel>
           </Form.Group>
+          <Form.Label>Limit</Form.Label>
           <InputGroup className="mb-3">
             <FormControl
               type="number"
