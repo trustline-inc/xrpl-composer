@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Button, Form, Row, Col, FloatingLabel } from "react-bootstrap"
+import { Button, Form, Row, Col } from "react-bootstrap"
 import { updateEdges } from "../../graph"
 import { api } from "../../xrpl";
 

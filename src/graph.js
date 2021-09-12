@@ -4,7 +4,6 @@ import {
   hasTrustLine,
   createTrustLine,
   enableRippling,
-  deleteAccount,
   makePayment
 } from "./xrpl"
 
