@@ -122,11 +122,8 @@ function Validator() {
       <div className="row">
         <div className="col-md-6">
           <h4>Payment Form</h4>
-          <p className="text-muted border rounded p-3">
-            <span className="fa fa-info-circle" /> Use node IDs instead of account addresses.
-          </p>
           <Form>
-            <h4>Source</h4>
+            <h5>Source</h5>
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Source Account</Form.Label>
@@ -165,7 +162,7 @@ function Validator() {
                 </Form.Select>
               </Form.Group>
             </Row>
-            <h4>Destination</h4>
+            <h5>Destination</h5>
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Destination Account</Form.Label>
@@ -211,9 +208,17 @@ function Validator() {
         </div>
         <div className="col-md-6">
           <h4>Valid Paths</h4>
-          <pre className="bg-light p-5">
-            {JSON.stringify(paths, null, 2)}
-          </pre>
+          {
+            paths ? (
+              <pre className="bg-light p-5">
+                {JSON.stringify(paths, null, 2)}
+              </pre>
+            ) : (
+              <div className="bg-light p-5 d-flex justify-content-center">
+                Paths will populate here
+              </div>
+            )
+          }
         </div>
       </div>
     </div>
