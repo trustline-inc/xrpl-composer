@@ -1,6 +1,6 @@
 import React from "react";
 import { Switch, Route, useRouteMatch, useLocation, useHistory } from "react-router-dom";
-import { Button, ListGroup } from "react-bootstrap"
+import { Button, ListGroup, Form } from "react-bootstrap"
 import LoadingModal from "../../components/LoadingModal";
 import CreateNodeModal from "../../components/CreateNodeModal";
 import CreateTrustLineModal from "../../components/CreateTrustLineModal";
@@ -14,6 +14,7 @@ function Builder() {
   const inputRef = React.useRef()
   const { path } = useRouteMatch();
   const { data, setData } = React.useContext(DataContext)
+  const [action, setAction] = React.useState("CreateNode")
   const [importType, setImportType] = React.useState()
   const [selectedNode, setSelectedNode] = React.useState(undefined)
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
@@ -27,7 +28,7 @@ function Builder() {
     setShowNodeModal(false);
     setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
-  const handleShowNodeModal = () => setShowNodeModal(true);
+  const handleShowCreateNodeModal = () => setShowNodeModal(true);
 
   const handleCloseTrustLineModal = () => {
     setShowTrustLineModal(false);
@@ -108,12 +109,12 @@ function Builder() {
   }, [location.pathname])
 
   return (
-    <div className="container-fluid mt-5">
+    <div className="container mt-5">
       <LoadingModal show={showLoadingModal} handleClose={handleCloseLoadingModal} />
       <CreateNodeModal show={showCreateNodeModal} handleClose={handleCloseCreateNodeModal} />
       <CreateTrustLineModal show={showTrustLineModal} handleClose={handleCloseTrustLineModal} selectedNode={selectedNode} />
-      <div className="row">
-        <div className="col-md-3">
+      <div className="row mb-5">
+        <div className="col-md-4 border p-5">
           <h4>Nodes</h4>
           <p className="text-muted">Please select a node from the list below or create a new node.</p>
           <ListGroup as="ul">
@@ -129,11 +130,33 @@ function Builder() {
               )
             }
           </ListGroup>
+          <div className="row mt-5">
+            <div className="col-6">
+              <h4 className="mb-3">Actions</h4>
+            </div>
+          </div>
           <div className="row">
-            <div className="d-grid gap-1 col-6">
-              <Button variant="secondary" className="mt-5" onClick={handleShowNodeModal}>
-                Create Node
-              </Button>
+            <div className="col-8">
+              <Form.Select aria-label="Actions" onChange={(event) => { console.log(event.target.value); setAction(event.target.value) }}>
+                <option value="CreateNode">Create Node</option>
+                <option value="CreateTrustLine" disabled={!selectedNode}>Create Trust Line</option>
+                <option value="SendPayment" disabled={!selectedNode}>Send Payment</option>
+                <option value="BlackholeAccount" disabled={!selectedNode}>Blackhole Account</option>
+                <option value="DeleteAccount" disabled={!selectedNode}>Delete Account</option>
+              </Form.Select>
+            </div>
+            <div className="col-4">
+              <div className="d-grid gap-2">
+                <Button variant="primary" className="mb-3" onClick={() => {
+                  if (action === "CreateNode") handleShowCreateNodeModal()
+                  if (action === "CreateTrustLine") handleShowTrustLineModal()
+                  if (action === "SendPayment") goToValidator()
+                  if (action === "BlackholeAccount") blackholeAccount()
+                  if (action === "DeleteAccount") deleteAccount()
+                }}>
+                  Go
+                </Button>
+              </div>
             </div>
           </div>
           <div className="row">
@@ -145,8 +168,6 @@ function Builder() {
                 </Button>
               </div>
             </div>
-          </div>
-          <div className="row">
             <div className="col-6">
               <div className="d-grid gap-1">
                 <input type="file" hidden ref={inputRef} onChange={fileUploadInputChange} />
@@ -157,7 +178,7 @@ function Builder() {
             </div>
           </div>
         </div>
-        <div className="col-md-6 bg-light px-5 py-5">
+        <div className="col-md-8 bg-light px-5 py-5 border">
           <Switch>
             <Route exact path={path}>
               <div className="d-flex justify-content-center align-items-center h-100">
@@ -181,49 +202,6 @@ function Builder() {
               }
             </Route>
           </Switch>
-        </div>
-        <div className="col-md-3">
-          <div className="row">
-            <div className="col-6">
-              <h4 className="mb-3 text-center">Actions</h4>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6">
-              <div className="d-grid gap-2">
-                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={handleShowTrustLineModal}>
-                  Create Trust Line
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6">
-              <div className="d-grid gap-2">
-                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={goToValidator}>
-                  Send Payment
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6">
-              <div className="d-grid gap-2">
-                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={blackholeAccount}>
-                  Blackhole Account
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6">
-              <div className="d-grid gap-2">
-                <Button variant="primary" className="mb-3" disabled={!selectedNode} onClick={deleteAccount}>
-                  Delete Account
-                </Button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
