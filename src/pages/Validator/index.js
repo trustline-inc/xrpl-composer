@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Button, Form, Row, Col } from "react-bootstrap"
+import { Button, Form, Row, Col, FloatingLabel } from "react-bootstrap"
 import { updateEdges } from "../../graph"
 import { api } from "../../xrpl";
 
@@ -72,7 +72,7 @@ function Validator() {
       config[destination].account.address,
       amount
     )
-    alert(JSON.stringify(response))
+    alert(JSON.stringify(response, null, 2))
     await api.disconnect()
     setLoading(false)
   }
@@ -130,7 +130,16 @@ function Validator() {
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Source Account</Form.Label>
-                <Form.Control type="text" onChange={onChangeAccount} defaultValue={account} />
+                <Form.Select aria-label="Source Account" onChange={onChangeAccount} defaultValue={account}>
+                  <option>Select...</option>
+                  {
+                    (() => {
+                      return Object.keys(config).map(account => (
+                        <option key={account} value={account}>{account}</option>
+                      ))
+                    })()
+                  }
+                </Form.Select>
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Max Amount</Form.Label>
@@ -144,14 +153,32 @@ function Validator() {
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Issuer</Form.Label>
-                <Form.Control type="text" onChange={onChangeSendMaxIssuer} defaultValue={sendMaxIssuer} />
+                <Form.Select aria-label="Issuer" onChange={onChangeSendMaxIssuer} defaultValue={sendMaxIssuer}>
+                  <option>Select...</option>
+                  {
+                    (() => {
+                      return Object.keys(config).map(account => (
+                        <option key={account} value={account}>{account}</option>
+                      ))
+                    })()
+                  }
+                </Form.Select>
               </Form.Group>
             </Row>
             <h4>Destination</h4>
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Destination Account</Form.Label>
-                <Form.Control type="text" onChange={onChangeDestination} defaultValue={destination} />
+                <Form.Select aria-label="Destination Account" onChange={onChangeDestination} defaultValue={destination}>
+                  <option>Select...</option>
+                  {
+                    (() => {
+                      return Object.keys(config).map(account => (
+                        <option key={account} value={account}>{account}</option>
+                      ))
+                    })()
+                  }
+                </Form.Select>
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Destination Amount</Form.Label>
@@ -165,7 +192,16 @@ function Validator() {
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Destination Issuer</Form.Label>
-                <Form.Control type="text" onChange={onChangeDestinationIssuer} defaultValue={destinationIssuer} />
+                <Form.Select aria-label="Destination Issuer" onChange={onChangeDestinationIssuer} defaultValue={destinationIssuer}>
+                  <option>Select...</option>
+                  {
+                    (() => {
+                      return Object.keys(config).map(account => (
+                        <option key={account} value={account}>{account}</option>
+                      ))
+                    })()
+                  }
+                </Form.Select>
               </Form.Group>
             </Row>
           </Form>
