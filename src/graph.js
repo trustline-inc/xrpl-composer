@@ -27,7 +27,7 @@ export async function createNode(data) {
 
   if (!config[id]) {
     const account = await createAccount()
-    if (!defaultRipple) await enableRippling(account)
+    if (defaultRipple) await enableRippling(account)
     config[id] = { account, ...data }
     const newConfig = JSON.stringify(config, null, 2);
     localStorage.setItem("config", newConfig)
