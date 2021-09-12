@@ -119,8 +119,8 @@ function Validator() {
 
   return (
     <div className="container mt-5">
-      <div className="row">
-        <div className="col-md-6">
+      <div className="row mb-5">
+        <div className="col-md-6 border p-5">
           <h4>Payment Form</h4>
           <Form>
             <h5>Source</h5>
@@ -206,15 +206,15 @@ function Validator() {
             { loading ? <i className="fas fa-spin fa-spinner" /> : "Submit" }
           </Button>
         </div>
-        <div className="col-md-6">
+        <div className="col-md-6 p-5 border">
           <h4>Valid Paths</h4>
           {
             paths ? (
-              <pre className="bg-light p-5">
+              <pre className="bg-light p-4 h-100 border rounded">
                 {JSON.stringify(paths, null, 2)}
               </pre>
             ) : (
-              <div className="bg-light p-5 d-flex justify-content-center">
+              <div className="bg-light p-5 d-flex justify-content-center align-items-center border rounded" style={{ height: "calc(100% - 35px)"}}>
                 Paths will populate here
               </div>
             )
