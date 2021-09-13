@@ -152,17 +152,17 @@ function Validator() {
                 </Form.Select>
               </Form.Group>
               <Form.Group as={Col}>
-                <Form.Label>Max Amount</Form.Label>
+                <Form.Label>Source Amount (Max)</Form.Label>
                 <Form.Control type="number" onChange={onChangeSourceValue} defaultValue={sourceValue} />
               </Form.Group>
             </Row>
             <Row className="mb-3">
               <Form.Group as={Col}>
-                <Form.Label>Currency</Form.Label>
+                <Form.Label>Source Currency</Form.Label>
                 <Form.Control type="text" onChange={onChangeSourceCurrency} defaultValue={sourceCurrency} />
               </Form.Group>
               <Form.Group as={Col}>
-                <Form.Label>Issuer</Form.Label>
+                <Form.Label>Source Issuer</Form.Label>
                 <Form.Select aria-label="Issuer" onChange={onChangeSourceIssuer} defaultValue={sourceIssuer}>
                   <option>Select...</option>
                   {
