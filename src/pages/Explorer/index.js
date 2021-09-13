@@ -1,11 +1,16 @@
 import React from "react";
 import * as d3 from "d3";
 import * as bootstrap from "bootstrap"
+import DataContext from "../../context/DataContext"
 import './index.css';
 
 function Explorer() {
-  const serialized = JSON.parse(localStorage.getItem("graph")) || { nodes: [], links: [] }
+  const { data, setData } = React.useContext(DataContext);
   const svgRef = React.useRef(null);
+
+  React.useEffect(() => {
+    setData({ ...data, graph: JSON.parse(localStorage.getItem("graph")) })
+  }, [])
 
   React.useEffect(() => {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -17,7 +22,7 @@ function Explorer() {
     };
     
     // ?
-    serialized.nodes.forEach(function(d, i) {
+    data.graph.nodes.forEach(function(d, i) {
       label.nodes.push({ node: d });
       label.nodes.push({ node: d });
       label.links.push({
@@ -30,17 +35,17 @@ function Explorer() {
       .force("charge", d3.forceManyBody().strength(-50))
       .force("link", d3.forceLink(label.links).distance(0).strength(2));
 
-    var graphLayout = d3.forceSimulation(serialized.nodes)
+    var graphLayout = d3.forceSimulation(data.graph.nodes)
       .force("charge", d3.forceManyBody().strength(-3000))
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
       .force("x", d3.forceX(window.innerWidth / 2).strength(1))
       .force("y", d3.forceY(window.innerHeight / 2).strength(1))
-      .force("link", d3.forceLink(serialized.links).id(function(d) { return d.id; }).distance(50).strength(1))
+      .force("link", d3.forceLink(data.graph.links).id(function(d) { return d.id; }).distance(50).strength(1))
       .on("tick", ticked);
 
     var adjlist = [];
 
-    serialized.links.forEach(function(d) {
+    data.graph.links.forEach(function(d) {
       adjlist[d.source.index + "-" + d.target.index] = true;
       adjlist[d.target.index + "-" + d.source.index] = true;
     });
@@ -84,7 +89,7 @@ function Explorer() {
     // Create links
     var link = container.append("g").attr("class", "links")
       .selectAll("line")
-      .data(serialized.links)
+      .data(data.graph.links)
       .enter()
       .append("line")
       .attr("stroke", "#aaa")
@@ -95,14 +100,16 @@ function Explorer() {
     // Create nodes
     var node = container.append("g").attr("class", "nodes")
       .selectAll("g")
-      .data(serialized.nodes)
+      .data(data.graph.nodes)
       .enter()
       .append("circle")
       .attr("r", 5)
+      .attr("id", function(d, i) { return "node-" + i })
       .attr("fill", function(d) { return color(d.group); })
     
     // Events
     node.on("mouseover", focus).on("mouseout", unfocus);
+    node.on("mouseover", showNodeInfo).on("mouseout", hideNodeInfo);
     link.on("mouseover", showRippleState).on("mouseout", hideRippleState);
     
     node.call(
@@ -200,7 +207,8 @@ function Explorer() {
       var link = document.getElementById(event.target.id)
       var popover = new bootstrap.Popover(link, {
         title: "RippleState",
-        content: `${JSON.stringify(d.rippleState, null, 2)}`
+        content: d.source.id + " -> " + d.target.id +  "<br/>Balance: " + d.weight,
+        html: true
       })
       popover.show()
     }
@@ -213,6 +221,32 @@ function Explorer() {
     function hideRippleState(event, d) {
       var link = document.getElementById(event.target.id)
       var popover = bootstrap.Popover.getInstance(link)
+      popover.dispose()
+    }
+
+    /**
+     * @function showNodeInfo
+     * @param {*} event 
+     * @param {*} d 
+     */
+    function showNodeInfo(event, d) {
+      var node = document.getElementById(event.target.id)
+      var popover = new bootstrap.Popover(node, {
+        title: "Info",
+        content: JSON.stringify(d, null, 2),
+        html: true
+      })
+      popover.show()
+    }
+
+    /**
+     * @function hideNodeInfo
+     * @param {*} event 
+     * @param {*} d 
+     */
+    function hideNodeInfo(event, d) {
+      var node = document.getElementById(event.target.id)
+      var popover = bootstrap.Popover.getInstance(node)
       popover.dispose()
     }
     
@@ -271,7 +305,7 @@ function Explorer() {
     }
 
     return () => { d3.selectAll("svg > *").remove(); }
-  }, [serialized.links, serialized.nodes])
+  }, [data.graph.links, data.graph.nodes])
 
   return (
     <svg ref={svgRef} width="100vw" height="100vh" className="Graph" />
