@@ -41,9 +41,9 @@ function Validator() {
             currency: destinationCurrency,
             issuer: config[destinationIssuer].account.address
           },
-          currency: "AUR",
+          currency: sourceCurrency,
           issuer: config[destinationIssuer].account.address,
-          value: "1",
+          value: sourceValue,
           id: 8,
           source_account: config[source].account.address,
           subcommand: "create"
@@ -52,31 +52,27 @@ function Validator() {
       ws.current.onclose = () => {
         console.log(`Disconnected from ${WEBSOCKET_SERVER}`)
       }
-
-      return () => {
+      ws.current.onmessage = event => {
+        const message = JSON.parse(event.data)
+        setPaths(message)
         ws.current.close();
       };
     }
+
+    return () => {
+      if (ws.current) ws.current.close();
+    };
   }, [
     source,
+    sourceValue,
+    sourceIssuer,
+    sourceCurrency,
     destination,
     destinationIssuer,
-    sourceIssuer,
-    config,
     destinationValue,
-    destinationCurrency
+    destinationCurrency,
+    config
   ])
-
-  /**
-   * Set paths
-   */
-  React.useEffect(() => {
-    if (!ws.current) return;      
-    ws.current.onmessage = event => {
-      const message = JSON.parse(event.data)
-      setPaths(message)
-    };
-  })
 
   const submit = async () => {
     setLoading(true)
