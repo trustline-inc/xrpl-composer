@@ -57,7 +57,7 @@ function Builder() {
   }
 
   function onReaderLoad(event) {
-    const result = JSON.parse(JSON.parse(event.target.result));
+    const result = JSON.parse(event.target.result);
     localStorage.setItem(importType, JSON.stringify(result))
     if (importType === "config")
     setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
