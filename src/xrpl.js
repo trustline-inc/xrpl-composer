@@ -13,6 +13,10 @@ api.on("ledger", async (ledger) => {
   console.log("Ledger version", ledger.ledgerVersion, "was validated.")
 })
 
+api.on('disconnected', (code) => {
+  console.log('Disconnected, code:', code);
+});
+
 export async function createAccount() {
   const address = api.generateAddress({ test: true })
   await axios("https://faucet.altnet.rippletest.net/accounts", {
@@ -179,7 +183,8 @@ export async function deleteAccount(account) {
 export async function makePayment(
   sender,
   receiver,
-  amount
+  amount,
+  path
 ) {
   let latestLedgerVersion = await api.getLedgerVersion()
   const tx = {
@@ -187,8 +192,9 @@ export async function makePayment(
     Account: sender.address,
     Amount: amount,
     Destination: receiver,
-    LastLedgerSequence: latestLedgerVersion + 15
+    LastLedgerSequence: latestLedgerVersion + 15,
   }
+  if (path) tx.Paths = [JSON.parse(path)]
   const preparedTx = await api.prepareTransaction(tx)
   const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion
   console.log("preparedTx:", preparedTx)
@@ -200,14 +206,19 @@ export async function makePayment(
   const txBlob = response.signedTransaction
   console.log("Signed blob:", txBlob)
   latestLedgerVersion = await api.getLedgerVersion()
-  const result = await api.submit(txBlob)
-  if (result.resultCode !== "tesSUCCESS") return result
-  console.log("Tentative result code:", result.resultCode)
-  console.log("Tentative result message:", result.resultMessage)
-  const earliestLedgerVersion = latestLedgerVersion + 1
-  return await validateTransaction(
-    txID,
-    earliestLedgerVersion,
-    maxLedgerVersion
-  )
+  try {
+    const result = await api.submit(txBlob)
+    if (result.resultCode !== "tesSUCCESS") return result
+    console.log("Tentative result code:", result.resultCode)
+    console.log("Tentative result message:", result.resultMessage)
+    const earliestLedgerVersion = latestLedgerVersion + 1
+    return await validateTransaction(
+      txID,
+      earliestLedgerVersion,
+      maxLedgerVersion
+    )
+  } catch (err) {
+    console.log("err...")
+    console.log(err)
+  }
 }

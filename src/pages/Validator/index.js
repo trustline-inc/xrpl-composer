@@ -23,6 +23,7 @@ function Validator() {
   const config = JSON.parse(localStorage.getItem("config"))
   const { data, setData } = React.useContext(DataContext);
   const [paths, setPaths] = React.useState()
+  const [path, setPath] = React.useState()
   const ws = React.useRef(null);
 
   /**
@@ -75,19 +76,24 @@ function Validator() {
   ])
 
   const submit = async () => {
-    setLoading(true)
-    const amount = {
-      currency: destinationCurrency,
-      issuer: config[destinationIssuer].account.address,
-      value: destinationValue.toString()
+    try {
+      setLoading(true)
+      const amount = {
+        currency: destinationCurrency,
+        issuer: config[destinationIssuer].account.address,
+        value: destinationValue.toString()
+      }
+      await api.connect()
+      // todo: fix
+      const response = await updateEdges(source, destination, amount, path)
+      setData({ ...data, graph: JSON.parse(localStorage.getItem("graph")) })
+      alert(JSON.stringify(response, null, 2))
+      await api.disconnect()
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
     }
-    await api.connect()
-    // todo: fix
-    const response = await updateEdges(source, destination, amount)
-    setData({ ...data, graph: JSON.parse(localStorage.getItem("graph")) })
-    alert(JSON.stringify(response, null, 2))
-    await api.disconnect()
-    setLoading(false)
   }
 
   const onChangeSource = async (event) => {
@@ -128,6 +134,12 @@ function Validator() {
   const onChangeSourceIssuer = async (event) => {
     const value = event.target.value
     setSourceIssuer(value)
+  }
+
+  const onChangePaths = async (event) => {
+    const value = event.target.value
+    console.log(value)
+    setPath(value)
   }
 
   return (
@@ -214,13 +226,19 @@ function Validator() {
                 </Form.Select>
               </Form.Group>
             </Row>
+            <h5>Paths <span className="text-muted">(Optional)</span></h5>
+            <Row className="mb-3">
+              <Form.Group as={Col}>
+                <Form.Control as="textarea" rows={4} onChange={onChangePaths} />
+              </Form.Group>
+            </Row>
           </Form>
           <Button variant="primary" onClick={submit} disabled={loading}>
             { loading ? <i className="fas fa-spin fa-spinner" /> : "Submit" }
           </Button>
         </div>
         <div className="col-md-6 p-5 border">
-          <h4>Valid Paths</h4>
+          <h4>Suggested Paths (<code>rippled</code>)</h4>
           {
             paths ? (
               <pre className="bg-light p-4 h-100 border rounded">
