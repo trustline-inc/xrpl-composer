@@ -60,7 +60,9 @@ function Builder() {
     const result = JSON.parse(event.target.result);
     localStorage.setItem(importType, JSON.stringify(result))
     if (importType === "config")
-    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
+      setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
+    if (importType === "graph")
+      setData({ ...data, graph: JSON.parse(localStorage.getItem("graph")) })
   }
 
   const blackholeAccount = async () => {
