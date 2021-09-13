@@ -68,7 +68,7 @@ function Validator() {
       const message = JSON.parse(event.data)
       setPaths(message)
     };
-  }, [ws])
+  })
 
   const submit = async () => {
     setLoading(true)
