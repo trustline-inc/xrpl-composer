@@ -42,7 +42,7 @@ function Validator() {
             issuer: config[destinationIssuer].account.address
           },
           currency: sourceCurrency,
-          issuer: config[destinationIssuer].account.address,
+          issuer: config[sourceIssuer].account.address,
           value: sourceValue,
           id: 8,
           source_account: config[source].account.address,
