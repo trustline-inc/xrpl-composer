@@ -12,13 +12,13 @@ function useQuery() {
 function Validator() {
   const query = useQuery();
   const [loading, setLoading] = React.useState(false)
-  const [account, setAccount] = React.useState(query.get("account"))
+  const [source, setSource] = React.useState(query.get("account"))
   const [destinationCurrency, setDestinationCurrency] = React.useState("AUR")
   const [destinationValue, setDestinationValue] = React.useState(1)
   const [destinationIssuer, setDestinationIssuer] = React.useState("")
-  const [sendMaxCurrency, setSendMaxCurrency] = React.useState("AUR")
-  const [sendMaxValue, setSendMaxValue] = React.useState(1)
-  const [sendMaxIssuer, setSendMaxIssuer] = React.useState("")
+  const [sourceCurrency, setSourceCurrency] = React.useState("AUR")
+  const [sourceValue, setSourceValue] = React.useState(1)
+  const [sourceIssuer, setSourceIssuer] = React.useState("")
   const [destination, setDestination] = React.useState("")
   const config = JSON.parse(localStorage.getItem("config"))
   const { data, setData } = React.useContext(DataContext);
@@ -29,10 +29,10 @@ function Validator() {
    * Manage WebSocket lifecycle
    */
   React.useEffect(() => {
-    const WEBSOCKET_SERVER = "wss://s.altnet.rippletest.net:51233/"
-    ws.current = new WebSocket(WEBSOCKET_SERVER);
-    ws.current.onopen = () => {
-      if (account && destination && destinationIssuer && sendMaxIssuer) {
+    if (source && destination && destinationIssuer && sourceIssuer) {
+      const WEBSOCKET_SERVER = "wss://s.altnet.rippletest.net:51233/"
+      ws.current = new WebSocket(WEBSOCKET_SERVER);
+      ws.current.onopen = () => {
         ws.current.send(JSON.stringify({
           command: "path_find",
           destination_account: config[destination].account.address,
@@ -45,25 +45,33 @@ function Validator() {
           issuer: config[destinationIssuer].account.address,
           value: "1",
           id: 8,
-          source_account: config[account].account.address,
+          source_account: config[source].account.address,
           subcommand: "create"
         }))
       }
-    }
-    ws.current.onclose = () => {
-      console.log(`Disconnected from ${WEBSOCKET_SERVER}`)
-    }
+      ws.current.onclose = () => {
+        console.log(`Disconnected from ${WEBSOCKET_SERVER}`)
+      }
 
-    return () => {
-      ws.current.close();
-    };
-  }, [account, destination, destinationIssuer, sendMaxIssuer, config, destinationCurrency, destinationValue])
+      return () => {
+        ws.current.close();
+      };
+    }
+  }, [
+    source,
+    destination,
+    destinationIssuer,
+    sourceIssuer,
+    config,
+    destinationValue,
+    destinationCurrency
+  ])
 
   /**
    * Set paths
    */
   React.useEffect(() => {
-    if (!ws.current) return;
+    if (!ws.current) return;      
     ws.current.onmessage = event => {
       const message = JSON.parse(event.data)
       setPaths(message)
@@ -79,16 +87,16 @@ function Validator() {
     }
     await api.connect()
     // todo: fix
-    const response = await updateEdges(account, destination, amount)
+    const response = await updateEdges(source, destination, amount)
     setData({ ...data, graph: JSON.parse(localStorage.getItem("graph")) })
     alert(JSON.stringify(response, null, 2))
     await api.disconnect()
     setLoading(false)
   }
 
-  const onChangeAccount = async (event) => {
+  const onChangeSource = async (event) => {
     const value = event.target.value
-    setAccount(value)
+    setSource(value)
   }
 
   const onChangeDestination = async (event) => {
@@ -111,19 +119,19 @@ function Validator() {
     setDestinationIssuer(value)
   }
 
-  const onChangeSendMaxValue = async (event) => {
+  const onChangeSourceValue = async (event) => {
     const value = event.target.value
-    setSendMaxValue(value)
+    setSourceValue(value)
   }
 
-  const onChangeSendMaxCurrency = async (event) => {
+  const onChangeSourceCurrency = async (event) => {
     const value = event.target.value
-    setSendMaxCurrency(value)
+    setSourceCurrency(value)
   }
 
-  const onChangeSendMaxIssuer = async (event) => {
+  const onChangeSourceIssuer = async (event) => {
     const value = event.target.value
-    setSendMaxIssuer(value)
+    setSourceIssuer(value)
   }
 
   return (
@@ -136,7 +144,7 @@ function Validator() {
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Source Account</Form.Label>
-                <Form.Select aria-label="Source Account" onChange={onChangeAccount} defaultValue={account}>
+                <Form.Select aria-label="Source Account" onChange={onChangeSource} defaultValue={source}>
                   <option>Select...</option>
                   {
                     (() => {
@@ -149,17 +157,17 @@ function Validator() {
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Max Amount</Form.Label>
-                <Form.Control type="number" onChange={onChangeSendMaxValue} defaultValue={sendMaxValue} />
+                <Form.Control type="number" onChange={onChangeSourceValue} defaultValue={sourceValue} />
               </Form.Group>
             </Row>
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Currency</Form.Label>
-                <Form.Control type="text" onChange={onChangeSendMaxCurrency} defaultValue={sendMaxCurrency} />
+                <Form.Control type="text" onChange={onChangeSourceCurrency} defaultValue={sourceCurrency} />
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Issuer</Form.Label>
-                <Form.Select aria-label="Issuer" onChange={onChangeSendMaxIssuer} defaultValue={sendMaxIssuer}>
+                <Form.Select aria-label="Issuer" onChange={onChangeSourceIssuer} defaultValue={sourceIssuer}>
                   <option>Select...</option>
                   {
                     (() => {
