@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Button, Form, Row, Col } from "react-bootstrap"
 import { updateEdges } from "../../graph"
 import { api } from "../../xrpl";
+import DataContext from "../../context/DataContext"
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -20,44 +21,54 @@ function Validator() {
   const [sendMaxIssuer, setSendMaxIssuer] = React.useState("")
   const [destination, setDestination] = React.useState("")
   const config = JSON.parse(localStorage.getItem("config"))
+  const { data, setData } = React.useContext(DataContext);
   const [paths, setPaths] = React.useState()
+  const ws = React.useRef(null);
 
+  /**
+   * Manage WebSocket lifecycle
+   */
   React.useEffect(() => {
     const WEBSOCKET_SERVER = "wss://s.altnet.rippletest.net:51233/"
-    const ws = new WebSocket(WEBSOCKET_SERVER)
-
-    ws.onopen = () => {
-      if (account && destination && destinationIssuer && sendMaxIssuer)
-      ws.send(JSON.stringify({
-        command: "path_find",
-        destination_account: config[destination].account.address,
-        destination_amount: {
-          value: destinationValue,
-          currency: destinationCurrency,
-          issuer: config[destinationIssuer].account.address
-        },
-        currency: "AUR",
-        issuer: config[destinationIssuer].account.address,
-        value: "1",
-        id: 8,
-        source_account: config[account].account.address,
-        subcommand: "create"
-      }))
+    ws.current = new WebSocket(WEBSOCKET_SERVER);
+    ws.current.onopen = () => {
+      if (account && destination && destinationIssuer && sendMaxIssuer) {
+        ws.current.send(JSON.stringify({
+          command: "path_find",
+          destination_account: config[destination].account.address,
+          destination_amount: {
+            value: destinationValue,
+            currency: destinationCurrency,
+            issuer: config[destinationIssuer].account.address
+          },
+          currency: "AUR",
+          issuer: config[destinationIssuer].account.address,
+          value: "1",
+          id: 8,
+          source_account: config[account].account.address,
+          subcommand: "create"
+        }))
+      }
     }
-
-    ws.onmessage = event => {
-      const message = JSON.parse(event.data)
-      setPaths(message)
-    }
-
-    ws.onclose = () => {
+    ws.current.onclose = () => {
       console.log(`Disconnected from ${WEBSOCKET_SERVER}`)
     }
 
     return () => {
-      ws.close()
-    }
+      ws.current.close();
+    };
   }, [account, destination, destinationIssuer, sendMaxIssuer, config, destinationCurrency, destinationValue])
+
+  /**
+   * Set paths
+   */
+  React.useEffect(() => {
+    if (!ws.current) return;
+    ws.current.onmessage = event => {
+      const message = JSON.parse(event.data)
+      setPaths(message)
+    };
+  }, [ws])
 
   const submit = async () => {
     setLoading(true)
@@ -67,11 +78,9 @@ function Validator() {
       value: destinationValue.toString()
     }
     await api.connect()
-    const response = await updateEdges(
-      config[account].account,
-      config[destination].account.address,
-      amount
-    )
+    // todo: fix
+    const response = await updateEdges(account, destination, amount)
+    setData({ ...data, graph: JSON.parse(localStorage.getItem("graph")) })
     alert(JSON.stringify(response, null, 2))
     await api.disconnect()
     setLoading(false)
