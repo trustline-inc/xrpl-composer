@@ -87,9 +87,23 @@ export async function removeNode(id) {
  * @returns 
  */
 export async function updateEdges(source, destination, amount) {
-  const tx = await makePayment(source, destination, amount)
-  // Update edges based on the result
+  const config = JSON.parse(localStorage.getItem("config"))
+  const tx = await makePayment(config[source].account, config[destination].account.address, amount)
   console.log(tx)
+  if (tx.resultCode === "tecPATH_PARTIAL") {
+  } else if (tx.resultCode === "tecPATH_DRY") {
+  } else {
+    const value = Number(tx.outcome.deliveredAmount.value)
+    const oldWeight = graph.getEdgeWeight(source, destination)
+    const newWeight = oldWeight + value
+    console.log("Old weight:", oldWeight)
+    console.log("New weight:", newWeight)
+    graph.setEdgeWeight(source, destination, newWeight)
+    console.log(graph.getEdgeWeight(destination, source))
+    console.log(graph.serialize())
+    localStorage.setItem("graph", JSON.stringify(graph.serialize()))
+  }
+
   return tx
 }
 
