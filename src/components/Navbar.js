@@ -26,13 +26,13 @@ function Navbar() {
     <div className="Navbar">
       <Navigation bg="light" expand="lg">
         <Container fluid>
-          <Navigation.Brand href="/">XRPL Graph <Badge bg="primary" pill>BETA</Badge></Navigation.Brand>
+          <Navigation.Brand href="/">XRPL Composer <Badge bg="primary" pill>BETA</Badge></Navigation.Brand>
           <Navigation.Toggle aria-controls="menu" />
           <Navigation.Collapse id="menu">
             <Nav className="me-auto">
-              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/explorer">Explorer</NavLink>
-              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/builder">Builder</NavLink>
-              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validator</NavLink>
+              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/builder">Build</NavLink>
+              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/explorer">Explore</NavLink>
+              <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validate</NavLink>
             </Nav>
             <Nav>
               <button className="ml-auto btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={Object.keys(data.config).length === 0 && Object.keys(data.graph).length === 0}>Download</button>
