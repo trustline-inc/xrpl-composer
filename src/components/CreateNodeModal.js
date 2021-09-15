@@ -5,7 +5,7 @@ import { api } from "../xrpl"
 import DataContext from "../context/DataContext"
 
 function CreateNodeModal({ show, handleClose }) {
-  const { data, setData } = React.useContext(DataContext);
+  const { setData } = React.useContext(DataContext);
   const [loading, setLoading] = React.useState(false)
   const [config, setConfig] = React.useState({
     id: "",
@@ -35,7 +35,10 @@ function CreateNodeModal({ show, handleClose }) {
     await api.disconnect()
     setLoading(false)
     handleClose()
-    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
+    setData({
+      config: JSON.parse(localStorage.getItem("config")),
+      graph: JSON.parse(localStorage.getItem("graph"))
+    })
   }
 
   return (

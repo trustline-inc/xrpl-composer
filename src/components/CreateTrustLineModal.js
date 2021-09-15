@@ -1,9 +1,11 @@
 import React from "react";
 import { Button, Form, Modal, FloatingLabel, InputGroup, FormControl } from "react-bootstrap"
 import { createEdge } from "../graph"
+import DataContext from "../context/DataContext"
 
 function CreateTrustLineModal({ show, handleClose, selectedNode }) {
   const config = JSON.parse(localStorage.getItem("config")) || {}
+  const { setData } = React.useContext(DataContext);
   const [loading, setLoading] = React.useState(false)
   const [target, setTarget] = React.useState()
   const [limit, setLimit] = React.useState(0)
@@ -22,6 +24,10 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
     await createEdge(selectedNode, target, limit)
     setLoading(false)
     setLimit(0)
+    setData({
+      config: JSON.parse(localStorage.getItem("config")),
+      graph: JSON.parse(localStorage.getItem("graph"))
+    })
     handleClose()
   }
 

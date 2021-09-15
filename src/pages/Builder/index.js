@@ -70,7 +70,10 @@ function Builder() {
     await blackhole(data.config[selectedNode].account)
     data.config[selectedNode].blackholed = true
     localStorage.setItem("config", JSON.stringify(data.config))
-    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
+    setData({
+      graph: JSON.parse(localStorage.getItem("graph")),
+      config: JSON.parse(localStorage.getItem("config"))
+    })
     setShowLoadingModal(false)
   }
 
@@ -78,7 +81,7 @@ function Builder() {
     await removeNode(selectedNode)
     setData({
       config: JSON.parse(localStorage.getItem("config")),
-      accounts: JSON.parse(localStorage.getItem("accounts"))
+      graph: JSON.parse(localStorage.getItem("graph"))
     })
     setSelectedNode(undefined)
     setAccountTrustLines(undefined)

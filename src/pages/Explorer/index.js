@@ -5,12 +5,8 @@ import DataContext from "../../context/DataContext"
 import './index.css';
 
 function Explorer() {
-  const { data, setData } = React.useContext(DataContext);
+  const { data } = React.useContext(DataContext);
   const svgRef = React.useRef(null);
-
-  React.useEffect(() => {
-    setData({ ...data, graph: JSON.parse(localStorage.getItem("graph")) })
-  }, [])
 
   React.useEffect(() => {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -20,7 +16,7 @@ function Explorer() {
       'nodes': [],
       'links': []
     };
-    
+
     // ?
     data.graph.nodes.forEach(function(d, i) {
       label.nodes.push({ node: d });
