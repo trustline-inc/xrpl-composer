@@ -26,7 +26,7 @@ function Navbar() {
     <div className="Navbar">
       <Navigation bg="light" expand="lg">
         <Container fluid>
-          <Navigation.Brand href="/">RippleGraph <Badge bg="primary" pill>BETA</Badge></Navigation.Brand>
+          <Navigation.Brand href="/">XRPL Graph <Badge bg="primary" pill>BETA</Badge></Navigation.Brand>
           <Navigation.Toggle aria-controls="menu" />
           <Navigation.Collapse id="menu">
             <Nav className="me-auto">
