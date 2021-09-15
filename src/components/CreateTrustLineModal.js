@@ -24,11 +24,11 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
     await createEdge(selectedNode, target, limit)
     setLoading(false)
     setLimit(0)
+    handleClose()
     setData({
       config: JSON.parse(localStorage.getItem("config")),
       graph: JSON.parse(localStorage.getItem("graph"))
     })
-    handleClose()
   }
 
   return (

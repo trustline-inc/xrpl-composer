@@ -1,11 +1,9 @@
 import React from "react";
 import * as d3 from "d3";
 import * as bootstrap from "bootstrap"
-import DataContext from "../../context/DataContext"
 import './index.css';
 
-function Explorer() {
-  const { data } = React.useContext(DataContext);
+function Explorer({ graph }) {
   const svgRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -18,7 +16,7 @@ function Explorer() {
     };
 
     // ?
-    data.graph.nodes.forEach(function(d, i) {
+    graph.nodes.forEach(function(d, i) {
       label.nodes.push({ node: d });
       label.nodes.push({ node: d });
       label.links.push({
@@ -31,17 +29,17 @@ function Explorer() {
       .force("charge", d3.forceManyBody().strength(-50))
       .force("link", d3.forceLink(label.links).distance(0).strength(2));
 
-    var graphLayout = d3.forceSimulation(data.graph.nodes)
+    var graphLayout = d3.forceSimulation(graph.nodes)
       .force("charge", d3.forceManyBody().strength(-3000))
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
       .force("x", d3.forceX(window.innerWidth / 2).strength(1))
       .force("y", d3.forceY(window.innerHeight / 2).strength(1))
-      .force("link", d3.forceLink(data.graph.links).id(function(d) { return d.id; }).distance(50).strength(1))
+      .force("link", d3.forceLink(graph.links).id(function(d) { return d.id; }).distance(50).strength(1))
       .on("tick", ticked);
 
     var adjlist = [];
 
-    data.graph.links.forEach(function(d) {
+    graph.links.forEach(function(d) {
       adjlist[d.source.index + "-" + d.target.index] = true;
       adjlist[d.target.index + "-" + d.source.index] = true;
     });
@@ -85,7 +83,7 @@ function Explorer() {
     // Create links
     var link = container.append("g").attr("class", "links")
       .selectAll("line")
-      .data(data.graph.links)
+      .data(graph.links)
       .enter()
       .append("line")
       .attr("stroke", "#aaa")
@@ -96,7 +94,7 @@ function Explorer() {
     // Create nodes
     var node = container.append("g").attr("class", "nodes")
       .selectAll("g")
-      .data(data.graph.nodes)
+      .data(graph.nodes)
       .enter()
       .append("circle")
       .attr("r", 5)
@@ -301,7 +299,7 @@ function Explorer() {
     }
 
     return () => { d3.selectAll("svg > *").remove(); }
-  }, [data.graph.links, data.graph.nodes])
+  }, [graph.links, graph.nodes])
 
   return (
     <svg ref={svgRef} width="100vw" height="100vh" className="Graph" />

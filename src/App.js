@@ -17,21 +17,18 @@ function App() {
     config: JSON.parse(localStorage.getItem("config")) || {},
     graph: JSON.parse(localStorage.getItem("graph")) || { nodes: [], links: [] }
   });
-  const value = React.useMemo(
-    () => ({ data, setData }),
-    [data]
-  );
+
   return (
     <div className="App">
-      <DataContext.Provider value={value}>
+      <DataContext.Provider value={{ data, setData }}>
         <Router>
-          <Navbar data={data} />
+          <Navbar />
           <Switch>
             <Route exact path="/">
               <Home />
             </Route>
             <Route path="/explorer">
-              <Explorer />
+              <Explorer graph={data.graph} />
             </Route>
             <Route path="/builder">
               <Builder />
