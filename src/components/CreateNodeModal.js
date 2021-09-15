@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Form, Modal } from "react-bootstrap"
 import { createNode } from "../graph"
-import { api } from "../xrpl"
 import DataContext from "../context/DataContext"
 
 function CreateNodeModal({ show, handleClose }) {
@@ -30,9 +29,7 @@ function CreateNodeModal({ show, handleClose }) {
 
   const handleSave = async () => {
     setLoading(true)
-    await api.connect()
     await createNode(config)
-    await api.disconnect()
     setLoading(false)
     handleClose()
     setData({

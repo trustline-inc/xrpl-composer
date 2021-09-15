@@ -18,17 +18,17 @@ function Builder() {
   const [importType, setImportType] = React.useState()
   const [selectedNode, setSelectedNode] = React.useState(undefined)
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
-  const [showCreateNodeModal, setShowNodeModal] = React.useState(false);
+  const [showCreateNodeModal, setShowCreateNodeModal] = React.useState(false);
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
   const hasAccounts = Object.keys(data.config).length !== 0
   const location = useLocation();
 
   const handleCloseCreateNodeModal = () => {
-    setShowNodeModal(false);
+    setShowCreateNodeModal(false);
     setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
-  const handleShowCreateNodeModal = () => setShowNodeModal(true);
+  const handleShowCreateNodeModal = () => setShowCreateNodeModal(true);
 
   const handleCloseTrustLineModal = () => {
     setShowTrustLineModal(false);
@@ -90,16 +90,21 @@ function Builder() {
 
   const handleCloseLoadingModal = () => setShowLoadingModal(false)
 
+  React.useEffect(() => {
+    (async () => {
+      if (!api.isConnected()) await api.connect()
+    })()
+    return async () => await api.disconnect()
+  }, [])
+
   /**
    * Fetch node info when selected
    */
   React.useEffect(() => {
     (async () => {
       if (selectedNode && data.config[selectedNode]) {
-        await api.connect()
         const trustLines = await getTrustLines(data.config[selectedNode].account.address)
         setAccountTrustLines(trustLines)
-        await api.disconnect()
       }
     })()
   }, [selectedNode, data.config])
@@ -142,7 +147,7 @@ function Builder() {
           </div>
           <div className="row">
             <div className="col-8">
-              <Form.Select aria-label="Actions" onChange={(event) => { console.log(event.target.value); setAction(event.target.value) }}>
+              <Form.Select aria-label="Actions" onChange={(event) => { setAction(event.target.value) }}>
                 <option value="CreateNode">Create Node</option>
                 <option value="CreateTrustLine" disabled={!selectedNode}>Create Trust Line</option>
                 <option value="SendPayment" disabled={!selectedNode}>Send Payment</option>

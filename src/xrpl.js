@@ -3,9 +3,10 @@ import axios from "axios"
 import { sleep } from "./util"
 
 let LAST_VALIDATED_LEDGER;
+const SERVER = "wss://s.altnet.rippletest.net:51233"
 
 export const api = new RippleAPI({
-  server: 'wss://s.altnet.rippletest.net:51233'
+  server: SERVER
 });
 
 api.on("ledger", async (ledger) => {
@@ -13,8 +14,12 @@ api.on("ledger", async (ledger) => {
   console.log("Ledger version", ledger.ledgerVersion, "was validated.")
 })
 
-api.on('disconnected', (code) => {
-  console.log('Disconnected, code:', code);
+api.on("connected", () => {
+  console.log(`RippleAPI connected to ${SERVER}.`);
+});
+
+api.on("disconnected", () => {
+  console.log("RippleAPI disconnected.");
 });
 
 export async function createAccount() {
