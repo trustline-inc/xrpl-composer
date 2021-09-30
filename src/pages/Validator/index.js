@@ -20,7 +20,9 @@ function Validator() {
   const [sourceValue, setSourceValue] = React.useState(1)
   const [sourceIssuer, setSourceIssuer] = React.useState("")
   const [destination, setDestination] = React.useState("")
-  const config = JSON.parse(localStorage.getItem("config"))
+  const config = React.useMemo(() => {
+    return JSON.parse(localStorage.getItem("config")) || {}
+  }, [])
   const { data, setData } = React.useContext(DataContext);
   const [paths, setPaths] = React.useState()
   const [path, setPath] = React.useState()
