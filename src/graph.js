@@ -15,7 +15,7 @@ const graph = Graph(JSON.parse(saved));
  * @param {*} data 
  */
 export async function createNode(data) {
-  const { id, defaultRipple } = data;
+  const { id, defaultRipple, address } = data;
   let config = localStorage.getItem("config")
 
   if (!config) {
@@ -25,12 +25,20 @@ export async function createNode(data) {
   }
 
   if (!config[id]) {
-    const account = await createAccount()
-    if (defaultRipple) await enableRippling(account)
-    config[id] = { account, ...data }
+    if (address) {
+      // read-only account
+      config[id] = {
+        account: { address }
+      }
+    } else {
+      var account = await createAccount()
+      console.log(`${id}:`, account.address)
+      if (defaultRipple) await enableRippling(account)
+      config[id] = { account, ...data }
+    }
+
     const newConfig = JSON.stringify(config, null, 2);
     localStorage.setItem("config", newConfig)
-    console.log(`${id}:`, account.address)
   } else {
     throw Error("An account with this ID already exists.")
   }

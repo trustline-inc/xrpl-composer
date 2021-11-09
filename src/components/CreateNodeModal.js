@@ -8,12 +8,20 @@ function CreateNodeModal({ show, handleClose }) {
   const [loading, setLoading] = React.useState(false)
   const [config, setConfig] = React.useState({
     id: "",
+    address: null,
     defaultRipple: false,
     blackholed: false
   })
 
-  const onChangeInput = (event) => {
+  const onChangeIdentifier = (event) => {
     event.target.value = event.target.value.toUpperCase().replace(" ", "_").replace(/[\W]+/g, "");
+    setConfig({
+      ...config,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const onChangeAddress = (event) => {
     setConfig({
       ...config,
       [event.target.name]: event.target.value
@@ -47,7 +55,7 @@ function CreateNodeModal({ show, handleClose }) {
         <Form>
           <Form.Group className="mb-3" controlId="node.Id">
             <Form.Label>Identifier</Form.Label>
-            <Form.Control type="text" onChange={onChangeInput} name="id" />
+            <Form.Control type="text" onChange={onChangeIdentifier} name="id" />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Check
@@ -56,6 +64,11 @@ function CreateNodeModal({ show, handleClose }) {
               label={"Enable Default Ripple"}
               onChange={onChangeCheckbox}
             />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="node.address">
+            <Form.Label>Address</Form.Label>
+            <Form.Control type="text" onChange={onChangeAddress} name="address" />
+            <Form.Text>Use an existing account (read-only)</Form.Text>
           </Form.Group>
         </Form>
       </Modal.Body>
