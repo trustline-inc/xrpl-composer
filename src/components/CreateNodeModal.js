@@ -3,15 +3,17 @@ import { Button, Form, Modal } from "react-bootstrap"
 import { createNode } from "../graph"
 import DataContext from "../context/DataContext"
 
+const DEFAULT_CONFIG = {
+  id: "",
+  address: null,
+  defaultRipple: false,
+  blackholed: false
+}
+
 function CreateNodeModal({ show, handleClose }) {
   const { setData } = React.useContext(DataContext);
   const [loading, setLoading] = React.useState(false)
-  const [config, setConfig] = React.useState({
-    id: "",
-    address: null,
-    defaultRipple: false,
-    blackholed: false
-  })
+  const [config, setConfig] = React.useState(DEFAULT_CONFIG)
 
   const onChangeIdentifier = (event) => {
     event.target.value = event.target.value.toUpperCase().replace(" ", "_").replace(/[\W]+/g, "");
@@ -44,6 +46,7 @@ function CreateNodeModal({ show, handleClose }) {
       config: JSON.parse(localStorage.getItem("config")),
       graph: JSON.parse(localStorage.getItem("graph"))
     })
+    setConfig(DEFAULT_CONFIG)
   }
 
   return (
