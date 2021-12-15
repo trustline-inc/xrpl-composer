@@ -2,7 +2,7 @@ import React from "react";
 import { Switch, Route, useRouteMatch, useLocation, useHistory } from "react-router-dom";
 import { Button, ListGroup, Form } from "react-bootstrap"
 import LoadingModal from "../../components/LoadingModal";
-import CreateNodeModal from "../../components/CreateNodeModal";
+import CreateAccountModal from "../../components/CreateAccountModal";
 import CreateTrustLineModal from "../../components/CreateTrustLineModal";
 import { api, getTrustLines, blackhole } from "../../xrpl"
 import { removeNode } from "../../graph"
@@ -18,17 +18,17 @@ function Builder() {
   const [importType, setImportType] = React.useState()
   const [selectedNode, setSelectedNode] = React.useState(undefined)
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
-  const [showCreateNodeModal, setShowCreateNodeModal] = React.useState(false);
+  const [showCreateAccountModal, setShowCreateAccountModal] = React.useState(false);
   const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
   const hasAccounts = Object.keys(data.config).length !== 0
   const location = useLocation();
 
-  const handleCloseCreateNodeModal = () => {
-    setShowCreateNodeModal(false);
+  const handleCloseCreateAccountModal = () => {
+    setShowCreateAccountModal(false);
     setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
-  const handleShowCreateNodeModal = () => setShowCreateNodeModal(true);
+  const handleShowCreateAccountModal = () => setShowCreateAccountModal(true);
 
   const handleCloseTrustLineModal = () => {
     setShowTrustLineModal(false);
@@ -121,12 +121,12 @@ function Builder() {
   return (
     <div className="container mt-5">
       <LoadingModal show={showLoadingModal} handleClose={handleCloseLoadingModal} />
-      <CreateNodeModal show={showCreateNodeModal} handleClose={handleCloseCreateNodeModal} />
+      <CreateAccountModal show={showCreateAccountModal} handleClose={handleCloseCreateAccountModal} />
       <CreateTrustLineModal show={showTrustLineModal} handleClose={handleCloseTrustLineModal} selectedNode={selectedNode} />
       <div className="row mb-5">
         <div className="col-md-4 border p-5">
-          <h4>Nodes</h4>
-          <p className="text-muted">Please select a node from the list below or create a new node.</p>
+          <h4>Accounts</h4>
+          <p className="text-muted">Please select an account from the list below or create a new one.</p>
           <ListGroup as="ul">
             {
               hasAccounts ? (
@@ -136,7 +136,7 @@ function Builder() {
                   </ListGroup.Item>
                 ))
               ) : (
-                "No nodes created."
+                "No accounts created."
               )
             }
           </ListGroup>
@@ -148,7 +148,7 @@ function Builder() {
           <div className="row">
             <div className="col-8">
               <Form.Select aria-label="Actions" onChange={(event) => { setAction(event.target.value) }}>
-                <option value="CreateNode">Create Node</option>
+                <option value="CreateNode">Create Account</option>
                 <option value="CreateTrustLine" disabled={!selectedNode}>Create Trust Line</option>
                 <option value="SendPayment" disabled={!selectedNode}>Send Payment</option>
                 <option value="BlackholeAccount" disabled={!selectedNode}>Blackhole Account</option>
@@ -158,7 +158,7 @@ function Builder() {
             <div className="col-4">
               <div className="d-grid gap-2">
                 <Button variant="primary" className="mb-3" onClick={() => {
-                  if (action === "CreateNode") handleShowCreateNodeModal()
+                  if (action === "CreateNode") handleShowCreateAccountModal()
                   if (action === "CreateTrustLine") handleShowTrustLineModal()
                   if (action === "SendPayment") goToValidator()
                   if (action === "BlackholeAccount") blackholeAccount()
@@ -192,7 +192,7 @@ function Builder() {
           <Switch>
             <Route exact path={path}>
               <div className="d-flex justify-content-center align-items-center h-100">
-                Select a node to view info.
+                Select an account to view info.
               </div>
             </Route>
             <Route path={`${path}/:nodeId`}>

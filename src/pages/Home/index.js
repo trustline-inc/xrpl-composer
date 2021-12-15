@@ -19,7 +19,7 @@ function Explorer() {
               <div className="row">
                 <div className="col-md-8">
                   <h1 className="display-5 fw-bold">Introducing XRPL Composer</h1>
-                  <p className="fs-4">XRPL Composer is an open-source XRP Ledger graph composer. It lets you easily build topologies of interconnected accounts and send payments between them.</p>
+                  <p className="fs-4">XRPL Composer is an open-source network composer for the XRP Ledger. Easily build topologies of interconnected accounts and send payments between them.</p>
                   <button className="btn btn-primary btn-lg" onClick={() => navigate("/builder")}>Start Building</button>
                 </div>
                 <div className="col-md-4 d-flex justify-content-center align-items-center" style={{ minHeight: 300 }}>
@@ -34,8 +34,8 @@ function Explorer() {
       <div className="row align-items-md-stretch">
         <div className="col-md-6 mb-3">
           <div className="h-100 p-5 text-white bg-dark rounded-3">
-            <h2>View the Graph</h2>
-            <p>Visualize a network graph with the graph explorer.</p>
+            <h2>View the Network</h2>
+            <p>Visualize a network with the local network explorer.</p>
             <button className="btn btn-outline-light" type="button" onClick={() => navigate("/explorer")}>Explore</button>
           </div>
         </div>

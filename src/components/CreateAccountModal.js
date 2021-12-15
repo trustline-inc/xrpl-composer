@@ -10,10 +10,11 @@ const DEFAULT_CONFIG = {
   blackholed: false
 }
 
-function CreateNodeModal({ show, handleClose }) {
+function CreateAccountModal({ show, handleClose }) {
   const { setData } = React.useContext(DataContext);
   const [loading, setLoading] = React.useState(false)
   const [config, setConfig] = React.useState(DEFAULT_CONFIG)
+  const [accountType, setAccountType] = React.useState("new")
 
   const onChangeIdentifier = (event) => {
     event.target.value = event.target.value.toUpperCase().replace(" ", "_").replace(/[\W]+/g, "");
@@ -37,6 +38,10 @@ function CreateNodeModal({ show, handleClose }) {
     })
   }
 
+  const handleChange = (event) => {
+    setAccountType(event.target.value)
+  }
+
   const handleSave = async () => {
     setLoading(true)
     await createNode(config)
@@ -52,7 +57,7 @@ function CreateNodeModal({ show, handleClose }) {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header>
-        <Modal.Title>Create Node</Modal.Title>
+        <Modal.Title>Create Account</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -62,17 +67,42 @@ function CreateNodeModal({ show, handleClose }) {
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Check
-              name="defaultRipple"
-              type="checkbox"
-              label={"Enable Default Ripple"}
-              onChange={onChangeCheckbox}
+              inline
+              type="radio"
+              value="new"
+              id="new"
+              onChange={handleChange}
+              checked={accountType === "new"}
+              label="New Account"
+            />
+            <Form.Check
+              inline
+              type="radio"
+              value="existing"
+              id="existing"
+              onChange={handleChange}
+              checked={accountType === "existing"}
+              label="Existing Account"
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="node.address">
-            <Form.Label>Address</Form.Label>
-            <Form.Control type="text" onChange={onChangeAddress} name="address" />
-            <Form.Text>Use an existing account (read-only)</Form.Text>
-          </Form.Group>
+          {
+            accountType === "new" ? (
+              <Form.Group className="mb-3">
+                <Form.Check
+                  name="defaultRipple"
+                  type="checkbox"
+                  label={"Enable Default Ripple"}
+                  onChange={onChangeCheckbox}
+                />
+              </Form.Group>
+            ) : (
+              <Form.Group className="mb-3" controlId="node.address">
+                <Form.Label>Address</Form.Label>
+                <Form.Control type="text" onChange={onChangeAddress} name="address" />
+                <Form.Text>Use an existing account (read-only)</Form.Text>
+              </Form.Group>
+            ) 
+          }
         </Form>
       </Modal.Body>
       <Modal.Footer>
@@ -87,4 +117,4 @@ function CreateNodeModal({ show, handleClose }) {
   );
 }
 
-export default CreateNodeModal;
+export default CreateAccountModal;
