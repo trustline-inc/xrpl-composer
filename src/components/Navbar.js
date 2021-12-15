@@ -35,6 +35,10 @@ function Navbar() {
               <NavLink className="nav-link" activeClassName="active" aria-current="page" to="/validator">Validate</NavLink>
             </Nav>
             <Nav>
+              <select className="form-select mx-2" aria-label="Network Selector">
+                <option disabled value="mainnet">Mainnet</option>
+                <option value="testnet">Testnet</option>
+              </select>
               <button className="ml-auto btn btn-outline-success my-2 my-sm-0" id="downloadAnchorElem" onClick={download} disabled={Object.keys(data.config).length === 0 && Object.keys(data.graph).length === 0}>Download</button>
             </Nav>
           </Navigation.Collapse>
