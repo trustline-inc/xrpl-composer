@@ -57,7 +57,7 @@ function CreateAccountModal({ show, handleClose }) {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header>
-        <Modal.Title>Create Account</Modal.Title>
+        <Modal.Title>Add Account</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>

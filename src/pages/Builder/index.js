@@ -148,7 +148,7 @@ function Builder() {
           <div className="row">
             <div className="col-8">
               <Form.Select aria-label="Actions" onChange={(event) => { setAction(event.target.value) }}>
-                <option value="CreateNode">Create Account</option>
+                <option value="CreateNode">Add Account</option>
                 <option value="CreateTrustLine" disabled={!selectedNode}>Create Trust Line</option>
                 <option value="SendPayment" disabled={!selectedNode}>Send Payment</option>
                 <option value="BlackholeAccount" disabled={!selectedNode}>Blackhole Account</option>
