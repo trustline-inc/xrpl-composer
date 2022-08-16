@@ -17,7 +17,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
   }
 
   const onChangeLimit = (event) => {
-    setLimit(event.target.value)
+    setLimit(String(event.target.value))
   }
 
   const onChangeCurrency = (event) => {
@@ -79,7 +79,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
                 onChange={onChangeLimit}
                 value={limit}
               />
-              <Button variant="outline-secondary" onClick={() => setLimit(999999999)}>
+              <Button variant="outline-secondary" onClick={() => setLimit("999999999")}>
                 Max
               </Button>
             </InputGroup>
