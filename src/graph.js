@@ -61,7 +61,7 @@ export async function createEdge(source, target, currency, limit) {
     config = JSON.parse(config)
   }
 
-  if (!await hasTrustLine(config[source].account.address, config[target].account.address, currency, limit)) {
+  if (!await hasTrustLine(config[source].account.address, config[target].account.address, currency)) {
     await createTrustLine(config[source].account, config[target].account.address, currency, limit)
   }
   graph.addEdge(source, target);
