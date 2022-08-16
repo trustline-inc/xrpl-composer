@@ -52,7 +52,7 @@ export async function createNode(data) {
  * @param {*} target 
  * @param {*} limit 
  */
-export async function createEdge(source, target, limit) {
+export async function createEdge(source, target, currency, limit) {
   let config = localStorage.getItem("config")
 
   if (!config) {
@@ -61,8 +61,8 @@ export async function createEdge(source, target, limit) {
     config = JSON.parse(config)
   }
 
-  if (!await hasTrustLine(config[source].account.address, config[target].account.address)) {
-    await createTrustLine(config[source].account, config[target].account.address)
+  if (!await hasTrustLine(config[source].account.address, config[target].account.address, currency, limit)) {
+    await createTrustLine(config[source].account, config[target].account.address, currency, limit)
   }
   graph.addEdge(source, target);
   graph.setEdgeWeight(source, target, 0)

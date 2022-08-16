@@ -60,17 +60,17 @@ export async function blackhole(account) {
   );
 }
 
-export async function hasTrustLine(address, counterparty) {
+export async function hasTrustLine(address, counterparty, currency) {
   const trustlines = await api.getTrustlines(address)
-  return trustlines.some(trustline => trustline.specification.counterparty === counterparty)
+  return trustlines.some(trustline => (trustline.specification.counterparty === counterparty && trustline.specification.currency === currency))
 }
 
-export async function createTrustLine(account, counterparty) {
+export async function createTrustLine(account, counterparty, currency, limit) {
   console.log(`Creating trust line from ${account.address} to ${counterparty}`)
   const tx = {
-    currency: "AUR",
-    counterparty: counterparty,
-    limit: "999999999",
+    currency,
+    counterparty,
+    limit,
     qualityIn: 1,
     qualityOut: 1,
     ripplingDisabled: false,

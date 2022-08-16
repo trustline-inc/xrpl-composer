@@ -9,6 +9,7 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
   const [loading, setLoading] = React.useState(false)
   const [target, setTarget] = React.useState()
   const [limit, setLimit] = React.useState(0)
+  const [currency, setCurrency] = React.useState("USD")
 
   const onChangeTarget = (event) => {
     event.target.value = event.target.value.toUpperCase().replace(" ", "_").replace(/[\W]+/g, "");
@@ -19,9 +20,13 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
     setLimit(event.target.value)
   }
 
+  const onChangeCurrency = (event) => {
+    setCurrency(event.target.value)
+  }
+
   const handleSave = async () => {
     setLoading(true)
-    await createEdge(selectedNode, target, limit)
+    await createEdge(selectedNode, target, currency, limit)
     setLoading(false)
     setLimit(0)
     handleClose()
@@ -56,17 +61,29 @@ function CreateTrustLineModal({ show, handleClose, selectedNode }) {
               </Form.Control>
             </FloatingLabel>
           </Form.Group>
-          <Form.Label>Limit</Form.Label>
-          <InputGroup className="mb-3">
-            <FormControl
-              type="number"
-              onChange={onChangeLimit}
-              value={limit}
-            />
-            <Button variant="outline-secondary" onClick={() => setLimit(999999999)}>
-              Max
-            </Button>
-          </InputGroup>
+          <Form.Group className="mb-3">
+            <Form.Label>Currency</Form.Label>
+            <InputGroup className="mb-3">
+              <FormControl
+                type="text"
+                onChange={onChangeCurrency}
+                value={currency}
+              />
+            </InputGroup>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Limit</Form.Label>
+            <InputGroup className="mb-3">
+              <FormControl
+                type="number"
+                onChange={onChangeLimit}
+                value={limit}
+              />
+              <Button variant="outline-secondary" onClick={() => setLimit(999999999)}>
+                Max
+              </Button>
+            </InputGroup>
+          </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
