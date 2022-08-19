@@ -13,11 +13,11 @@ function Validator() {
   const query = useQuery();
   const [loading, setLoading] = React.useState(false)
   const [source, setSource] = React.useState(query.get("account"))
-  const [destinationCurrency, setDestinationCurrency] = React.useState("AUR")
-  const [destinationValue, setDestinationValue] = React.useState(1)
+  const [destinationCurrency, setDestinationCurrency] = React.useState("")
+  const [destinationValue, setDestinationValue] = React.useState(null)
   const [destinationIssuer, setDestinationIssuer] = React.useState("")
-  const [sourceCurrency, setSourceCurrency] = React.useState("AUR")
-  const [sourceValue, setSourceValue] = React.useState(1)
+  const [sourceCurrency, setSourceCurrency] = React.useState("")
+  const [sourceValue, setSourceValue] = React.useState(null)
   const [sourceIssuer, setSourceIssuer] = React.useState("")
   const [destination, setDestination] = React.useState("")
   const config = React.useMemo(() => {
@@ -173,7 +173,7 @@ function Validator() {
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Source Currency</Form.Label>
-                <Form.Control type="text" onChange={onChangeSourceCurrency} defaultValue={sourceCurrency} />
+                <Form.Control type="text" placeholder="USD" onChange={onChangeSourceCurrency} defaultValue={sourceCurrency} />
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Source Issuer</Form.Label>
@@ -212,7 +212,7 @@ function Validator() {
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label>Destination Currency</Form.Label>
-                <Form.Control type="text" onChange={onChangeDestinationCurrency} defaultValue={destinationCurrency} />
+                <Form.Control type="text" placeholder="USD" onChange={onChangeDestinationCurrency} defaultValue={destinationCurrency} />
               </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Destination Issuer</Form.Label>
@@ -235,7 +235,14 @@ function Validator() {
               </Form.Group>
             </Row>
           </Form>
-          <Button variant="primary" onClick={submit} disabled={loading}>
+          <Button
+            variant="primary"
+            onClick={submit}
+            disabled={
+              loading ||
+              !(sourceIssuer && sourceValue && sourceCurrency && source &&
+                destination && destinationCurrency && destinationIssuer && destinationValue
+          )}>
             { loading ? <i className="fas fa-spin fa-spinner" /> : "Submit" }
           </Button>
         </div>
