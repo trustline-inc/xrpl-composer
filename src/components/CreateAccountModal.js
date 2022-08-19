@@ -5,7 +5,10 @@ import DataContext from "../context/DataContext"
 
 const DEFAULT_CONFIG = {
   id: "",
-  seed: null,
+  wallet: {
+    classicAddress: null,
+    seed: null
+  },
   defaultRipple: false,
   blackholed: false
 }
@@ -27,13 +30,26 @@ function CreateAccountModal({ show, handleClose }) {
   const onChangeSeed = (event) => {
     setConfig({
       ...config,
-      [event.target.name]: event.target.value
+      wallet: {
+        ...config.wallet,
+        [event.target.name]: event.target.value
+      }
+    })
+  }
+
+  const onChangeAddress = (event) => {
+    setConfig({
+      ...config,
+      wallet: {
+        ...config.wallet,
+        [event.target.name]: event.target.value
+      }
     })
   }
 
   const onChangeCheckbox = (event) => {
     setConfig({
-      ...config,
+      ...config.wallet,
       [event.target.name]: event.target.checked
     })
   }
@@ -61,10 +77,6 @@ function CreateAccountModal({ show, handleClose }) {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3" controlId="node.Id">
-            <Form.Label>Identifier</Form.Label>
-            <Form.Control type="text" onChange={onChangeIdentifier} name="id" />
-          </Form.Group>
           <Form.Group className="mb-3">
             <Form.Check
               inline
@@ -73,20 +85,38 @@ function CreateAccountModal({ show, handleClose }) {
               id="new"
               onChange={handleChange}
               checked={accountType === "new"}
-              label="New Account"
+              label="Create Account"
             />
+          </Form.Group>
+          <Form.Group className="mb-3">
             <Form.Check
               inline
               type="radio"
-              value="existing"
-              id="existing"
+              value="import"
+              id="import"
               onChange={handleChange}
-              checked={accountType === "existing"}
-              label="Existing Account"
+              checked={accountType === "import"}
+              label="Import Account"
             />
           </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Check
+              inline
+              type="radio"
+              value="readonly"
+              id="readonly"
+              onChange={handleChange}
+              checked={accountType === "readonly"}
+              label="Use Read-only Account"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="node.Id">
+            <Form.Label>Identifier</Form.Label>
+            <Form.Control type="text" onChange={onChangeIdentifier} name="id" />
+            <Form.Text>A human-readable string</Form.Text>
+          </Form.Group>
           {
-            accountType === "new" ? (
+            accountType === "generate" && (
               <Form.Group className="mb-3">
                 <Form.Check
                   name="defaultRipple"
@@ -95,11 +125,23 @@ function CreateAccountModal({ show, handleClose }) {
                   onChange={onChangeCheckbox}
                 />
               </Form.Group>
-            ) : (
-              <Form.Group className="mb-3" controlId="node.seed">
+            ) 
+          }
+          {
+            accountType === "import" && (
+              <Form.Group className="mb-3" controlId="node.wallet.seed">
                 <Form.Label>Seed</Form.Label>
-                <Form.Control type="text" onChange={onChangeSeed} name="seed" />
-                <Form.Text>Use an existing account</Form.Text>
+                <Form.Control type="text" onChange={onChangeSeed} name="wallet.seed" />
+                <Form.Text>Import an existing account</Form.Text>
+              </Form.Group>
+            )
+          }
+          {
+            accountType === "readonly" && (
+              <Form.Group className="mb-3" controlId="node.wallet.classicAddress">
+                <Form.Label>Address</Form.Label>
+                <Form.Control type="text" onChange={onChangeAddress} name="classicAddress" />
+                <Form.Text>Use a read-only account in classic address format</Form.Text>
               </Form.Group>
             ) 
           }

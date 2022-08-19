@@ -31,7 +31,7 @@ export async function blackhole(account) {
   });
   const latestLedgerVersion = await api.getLedgerVersion();
   const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion;
-  const response = api.sign(preparedTx.txJSON, account.secret);
+  const response = api.sign(preparedTx.txJSON, account.seed);
   const txID = response.id;
   const txBlob = response.signedTransaction;
   const result = await api.submit(txBlob);
@@ -44,13 +44,13 @@ export async function blackhole(account) {
   );
 }
 
-export async function hasTrustLine(address, counterparty, currency) {
-  const trustlines = await api.getTrustlines(address)
+export async function hasTrustLine(classicAddress, counterparty, currency) {
+  const trustlines = await api.getTrustlines(classicAddress)
   return trustlines.some(trustline => (trustline.specification.counterparty === counterparty && trustline.specification.currency === currency))
 }
 
 export async function createTrustLine(account, counterparty, currency, limit) {
-  console.log(`Creating trust line from ${account.address} to ${counterparty}`)
+  console.log(`Creating trust line from ${account.classicAddress} to ${counterparty}`)
   const tx = {
     currency,
     counterparty,
@@ -67,9 +67,46 @@ export async function createTrustLine(account, counterparty, currency, limit) {
       }
     ]
   }
-  const preparedTx = await api.prepareTrustline(account.address, tx)
+  const preparedTx = await api.prepareTrustline(account.classicAddress, tx)
   const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion
-  const response = api.sign(preparedTx.txJSON, account.secret)
+  const response = api.sign(preparedTx.txJSON, account.seed)
+  const txID = response.id
+  console.log("Identifying hash:", txID)
+  const txBlob = response.signedTransaction
+  console.log("Signed blob:", txBlob)
+  const result = await api.submit(txBlob)
+  console.log("Tentative result code:", result.resultCode)
+  console.log("Tentative result message:", result.resultMessage)
+  const latestLedgerVersion = await api.getLedgerVersion()
+  const earliestLedgerVersion = latestLedgerVersion + 1
+  await validateTransaction(
+    txID,
+    earliestLedgerVersion,
+    maxLedgerVersion
+  )
+}
+
+export async function deleteTrustLine(account, counterparty, currency) {
+  console.log(`Deleting trust line from ${account.classicAddress} to ${counterparty}`)
+  const tx = {
+    currency,
+    counterparty,
+    limit: "0",
+    qualityIn: 1,
+    qualityOut: 1,
+    ripplingDisabled: true,
+    frozen: false,
+    memos: [
+      {
+        type: "test",
+        format: "text/plain",
+        data: "Apex Dev Summit"
+      }
+    ]
+  }
+  const preparedTx = await api.prepareTrustline(account.classicAddress, tx)
+  const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion
+  const response = api.sign(preparedTx.txJSON, account.seed)
   const txID = response.id
   console.log("Identifying hash:", txID)
   const txBlob = response.signedTransaction
@@ -87,10 +124,10 @@ export async function createTrustLine(account, counterparty, currency, limit) {
 }
 
 export async function enableRippling(account) {
-  console.log(`Enabling rippling for ${account.address}`)
-  const prepared = await api.prepareSettings(account.address, { defaultRipple: true })
+  console.log(`Enabling rippling for ${account.classicAddress}`)
+  const prepared = await api.prepareSettings(account.classicAddress, { defaultRipple: true })
   const maxLedgerVersion = prepared.instructions.maxLedgerVersion
-  const response = api.sign(prepared.txJSON, account.secret)
+  const response = api.sign(prepared.txJSON, account.seed)
   const txID = response.id
   const txBlob = response.signedTransaction
   const result = await api.submit(txBlob)
@@ -132,27 +169,27 @@ export async function validateTransaction(
   })
 }
 
-export async function getSettings(address) {
-  return await api.getSettings(address)
+export async function getSettings(classicAddress) {
+  return await api.getSettings(classicAddress)
 }
 
 /**
  * @function getTrustLines
  */
- export async function getTrustLines(address) {
-  return await api.getTrustlines(address)
+ export async function getTrustLines(classicAddress) {
+  return await api.getTrustlines(classicAddress)
 }
 
 export async function deleteAccount(account) {
   const preparedTx = await api.prepareTransaction({
     TransactionType: "AccountDelete",
-    Account: account.address
+    Account: account.classicAddress
   })
   const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion
   console.log("preparedTx:", preparedTx)
   console.log("Transaction cost:", preparedTx.instructions.fee, "XRP")
   console.log("Transaction expires after ledger:", maxLedgerVersion)
-  const response = api.sign(preparedTx.txJSON, account.secret)
+  const response = api.sign(preparedTx.txJSON, account.seed)
   const txID = response.id
   console.log("Identifying hash:", txID)
   const txBlob = response.signedTransaction
@@ -178,7 +215,7 @@ export async function makePayment(
   let latestLedgerVersion = await api.getLedgerVersion()
   const tx = {
     TransactionType: "Payment",
-    Account: sender.address,
+    Account: sender.wallet.classicAddress,
     Amount: amount,
     Destination: receiver,
     LastLedgerSequence: latestLedgerVersion + 15,
@@ -189,7 +226,7 @@ export async function makePayment(
   console.log("preparedTx:", preparedTx)
   console.log("Transaction cost:", preparedTx.instructions.fee, "XRP")
   console.log("Transaction expires after ledger:", maxLedgerVersion)
-  const response = api.sign(preparedTx.txJSON, sender.secret)
+  const response = api.sign(preparedTx.txJSON, sender.seed)
   const txID = response.id
   console.log("Identifying hash:", txID)
   const txBlob = response.signedTransaction

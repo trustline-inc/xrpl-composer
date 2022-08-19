@@ -4,6 +4,7 @@ import { Button, ListGroup, Form } from "react-bootstrap"
 import LoadingModal from "../../components/LoadingModal";
 import CreateAccountModal from "../../components/CreateAccountModal";
 import CreateTrustLineModal from "../../components/CreateTrustLineModal";
+import DeleteTrustLineModal from "../../components/DeleteTrustLineModal";
 import { api, getTrustLines, blackhole } from "../../xrpl"
 import { removeNode } from "../../graph"
 import DataContext from "../../context/DataContext"
@@ -19,7 +20,8 @@ function Builder() {
   const [selectedNode, setSelectedNode] = React.useState(undefined)
   const [showLoadingModal, setShowLoadingModal] = React.useState(false);
   const [showCreateAccountModal, setShowCreateAccountModal] = React.useState(false);
-  const [showTrustLineModal, setShowTrustLineModal] = React.useState(false);
+  const [showCreateTrustLineModal, setShowCreateTrustLineModal] = React.useState(false);
+  const [showDeleteTrustLineModal, setShowDeleteTrustLineModal] = React.useState(false);
   const [accountTrustLines, setAccountTrustLines] = React.useState(undefined)
   const hasAccounts = Object.keys(data.config).length !== 0
   const location = useLocation();
@@ -30,11 +32,16 @@ function Builder() {
   }
   const handleShowCreateAccountModal = () => setShowCreateAccountModal(true);
 
-  const handleCloseTrustLineModal = () => {
-    setShowTrustLineModal(false);
+  const handleCloseCreateTrustLineModal = () => {
+    setShowCreateTrustLineModal(false);
     setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
   }
-  const handleShowTrustLineModal = () => setShowTrustLineModal(true);
+  const handleCloseDeleteTrustLineModal = () => {
+    setShowDeleteTrustLineModal(false);
+    setData({ ...data, config: JSON.parse(localStorage.getItem("config")) })
+  }
+  const handleShowCreateTrustLineModal = () => setShowCreateTrustLineModal(true);
+  const handleShowDeleteTrustLineModal = () => setShowDeleteTrustLineModal(true);
 
   const goToValidator = () => {
     history.push(`/validator?account=${selectedNode}`);
@@ -103,7 +110,7 @@ function Builder() {
   React.useEffect(() => {
     (async () => {
       if (selectedNode && data.config[selectedNode]) {
-        const trustLines = await getTrustLines(data.config[selectedNode].account.address)
+        const trustLines = await getTrustLines(data.config[selectedNode].wallet.classicAddress)
         setAccountTrustLines(trustLines)
       }
     })()
@@ -122,7 +129,8 @@ function Builder() {
     <div className="container mt-5">
       <LoadingModal show={showLoadingModal} handleClose={handleCloseLoadingModal} />
       <CreateAccountModal show={showCreateAccountModal} handleClose={handleCloseCreateAccountModal} />
-      <CreateTrustLineModal show={showTrustLineModal} handleClose={handleCloseTrustLineModal} selectedNode={selectedNode} />
+      <CreateTrustLineModal show={showCreateTrustLineModal} handleClose={handleCloseCreateTrustLineModal} selectedNode={selectedNode} />
+      <DeleteTrustLineModal show={showDeleteTrustLineModal} handleClose={handleCloseDeleteTrustLineModal} selectedNode={selectedNode} />
       <div className="row mb-5">
         <div className="col-md-4 border p-5">
           <h4>Accounts</h4>
@@ -150,6 +158,7 @@ function Builder() {
               <Form.Select aria-label="Actions" onChange={(event) => { setAction(event.target.value) }}>
                 <option value="CreateNode">Add Account</option>
                 <option value="CreateTrustLine" disabled={!selectedNode}>Create Trust Line</option>
+                <option value="DeleteTrustLine">Delete Trust Line</option>
                 <option value="SendPayment" disabled={!selectedNode}>Send Payment</option>
                 <option value="BlackholeAccount" disabled={!selectedNode}>Blackhole Account</option>
                 <option value="DeleteAccount" disabled={!selectedNode}>Delete Account</option>
@@ -159,7 +168,8 @@ function Builder() {
               <div className="d-grid gap-2">
                 <Button variant="primary" className="mb-3" onClick={() => {
                   if (action === "CreateNode") handleShowCreateAccountModal()
-                  if (action === "CreateTrustLine") handleShowTrustLineModal()
+                  if (action === "CreateTrustLine") handleShowCreateTrustLineModal()
+                  if (action === "DeleteTrustLine") handleShowDeleteTrustLineModal()
                   if (action === "SendPayment") goToValidator()
                   if (action === "BlackholeAccount") blackholeAccount()
                   if (action === "DeleteAccount") deleteAccount()

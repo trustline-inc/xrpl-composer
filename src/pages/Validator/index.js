@@ -38,17 +38,17 @@ function Validator() {
       ws.current.onopen = () => {
         ws.current.send(JSON.stringify({
           command: "path_find",
-          destination_account: config[destination].account.address,
+          destination_account: config[destination].wallet.classicAddress,
           destination_amount: {
             value: destinationValue,
             currency: destinationCurrency,
-            issuer: config[destinationIssuer].account.address
+            issuer: config[destinationIssuer].wallet.classicAddress
           },
           currency: sourceCurrency,
-          issuer: config[sourceIssuer].account.address,
+          issuer: config[sourceIssuer].wallet.classicAddress,
           value: sourceValue,
           id: 8,
-          source_account: config[source].account.address,
+          source_account: config[source].wallet.classicAddress,
           subcommand: "create"
         }))
       }
@@ -82,7 +82,7 @@ function Validator() {
       setLoading(true)
       const amount = {
         currency: destinationCurrency,
-        issuer: config[destinationIssuer].account.address,
+        issuer: config[destinationIssuer].wallet.classicAddress,
         value: destinationValue.toString()
       }
       await api.connect()

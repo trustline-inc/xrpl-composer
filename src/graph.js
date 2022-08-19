@@ -3,6 +3,7 @@ import { Client, Wallet } from "xrpl"
 import {
   hasTrustLine,
   createTrustLine,
+  deleteTrustLine,
   enableRippling,
   makePayment
 } from "./xrpl"
@@ -15,7 +16,7 @@ const graph = Graph(JSON.parse(saved));
  * @param {*} data 
  */
 export async function createNode(data) {
-  const { id, defaultRipple, seed } = data;
+  const { id, defaultRipple, seed, address } = data;
   let config = localStorage.getItem("config")
 
   if (!config) {
@@ -25,24 +26,33 @@ export async function createNode(data) {
   }
 
   if (!config[id]) {
-    const wallet = Wallet.fromSecret(seed)
+    let wallet;
+
     const api = new Client("wss://s.altnet.rippletest.net:51233")
     await api.connect()
-    const { wallet: _wallet } = await api.fundWallet(wallet)
-    const account = {
-      xAddress: _wallet.xAddress,
-      secret: _wallet.seed,
-      classicAddress: _wallet.classicAddress,
-      address: _wallet.address
-    }
-    config[id] = { account }
 
-    console.log(`${id}:`, account.address)
-    if (defaultRipple) await enableRippling(account)
-    config[id] = { account, ...data }
+    if (seed) {
+      // Import account
+      wallet = Wallet.fromSecret(seed)
+      // TODO: Check if account is already funded
+      await api.fundWallet(wallet)
+    } else if (address) {
+      // Read-only account
+      wallet = { classicAddress: address }
+    } else {
+      // Generate new account
+      wallet = (await api.fundWallet()).wallet
+    }
+
+    config[id] = { wallet }
+
+    console.log(`${id}:`, wallet.classicAddress)
+    if (defaultRipple) await enableRippling(wallet)
+    config[id] = { wallet, ...data }
 
     const newConfig = JSON.stringify(config, null, 2);
     localStorage.setItem("config", newConfig)
+
   } else {
     throw Error("An account with this ID already exists.")
   }
@@ -65,11 +75,33 @@ export async function createEdge(source, target, currency, limit) {
     config = JSON.parse(config)
   }
 
-  if (!await hasTrustLine(config[source].account.seed, config[target].account.seed, currency)) {
-    await createTrustLine(config[source].account, config[target].account.seed, currency, limit)
+  if (!await hasTrustLine(config[source].wallet.classicAddress, config[target].wallet.classicAddress, currency)) {
+    await createTrustLine(config[source].wallet, config[target].wallet.classicAddress, currency, limit)
   }
   graph.addEdge(source, target);
   graph.setEdgeWeight(source, target, 0)
+  localStorage.setItem("graph", JSON.stringify(graph.serialize()))
+}
+
+/**
+ * @function deleteEdge
+ * @param {*} source 
+ * @param {*} target 
+ */
+ export async function deleteEdge(source, target, currency) {
+  let config = localStorage.getItem("config")
+
+  if (!config) {
+    config = {}
+  } else {
+    config = JSON.parse(config)
+  }
+
+  if (await hasTrustLine(config[source].wallet.classicAddress, config[target].wallet.classicAddress, currency)) {
+    // Note: to fully delete a trust line, you also have to offload any positive balance. We're not doing that here (yet)
+    await deleteTrustLine(config[source].wallet, config[target].wallet.classicAddress, currency)
+  }
+  graph.removeEdge(source, target);
   localStorage.setItem("graph", JSON.stringify(graph.serialize()))
 }
 
@@ -80,7 +112,7 @@ export async function createEdge(source, target, currency, limit) {
 export async function removeNode(id) {
   let config = JSON.parse(localStorage.getItem("config"))
   // @todo: #2 Fix error `Rippled: Submit Failed`
-  // await deleteAccount(config[id].account)
+  // await deleteAccount(config[id].wallet)
   const edges = graph.adjacent(id)
   edges.forEach(edge => {
     graph.removeEdge(id, edge)
@@ -100,7 +132,7 @@ export async function removeNode(id) {
  */
 export async function updateEdges(source, destination, amount, path) {
   const config = JSON.parse(localStorage.getItem("config"))
-  const tx = await makePayment(config[source].account, config[destination].account.seed, amount, path)
+  const tx = await makePayment(config[source].wallet, config[destination].wallet.seed, amount, path)
   console.log(tx)
   if (tx.resultCode === "tecPATH_PARTIAL") {
   } else if (tx.resultCode === "tecPATH_DRY") {
