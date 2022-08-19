@@ -131,7 +131,7 @@ function CreateAccountModal({ show, handleClose }) {
             accountType === "import" && (
               <Form.Group className="mb-3" controlId="node.wallet.seed">
                 <Form.Label>Seed</Form.Label>
-                <Form.Control type="text" onChange={onChangeSeed} name="wallet.seed" />
+                <Form.Control type="text" onChange={onChangeSeed} name="seed" />
                 <Form.Text>Import an existing account</Form.Text>
               </Form.Group>
             )
