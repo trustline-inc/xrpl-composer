@@ -8,7 +8,7 @@ function DeleteTrustLineModal({ show, handleClose, selectedNode }) {
   const { setData } = React.useContext(DataContext);
   const [loading, setLoading] = React.useState(false)
   const [target, setTarget] = React.useState()
-  const [currency, setCurrency] = React.useState("USD")
+  const [currency, setCurrency] = React.useState("")
 
   const onChangeTarget = (event) => {
     event.target.value = event.target.value.toUpperCase().replace(" ", "_").replace(/[\W]+/g, "");
@@ -59,6 +59,7 @@ function DeleteTrustLineModal({ show, handleClose, selectedNode }) {
             <Form.Label>Currency</Form.Label>
             <InputGroup className="mb-3">
               <FormControl
+                placeholder="USD"
                 type="text"
                 onChange={onChangeCurrency}
                 value={currency}
