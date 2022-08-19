@@ -22,22 +22,6 @@ api.on("disconnected", () => {
   console.log("RippleAPI disconnected.");
 });
 
-export async function createAccount() {
-  const address = api.generateAddress({ test: true })
-  await axios("https://faucet.altnet.rippletest.net/accounts", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    data: {
-      destination: address.classicAddress,
-      xrpAmount: "100"
-    }
-  })
-  await sleep(10000)
-  return address
-}
-
 export async function blackhole(account) {
   const ACCOUNT_ONE = "rrrrrrrrrrrrrrrrrrrrBZbvji";
   const preparedTx = await api.prepareSettings(account.xAddress, {

@@ -5,7 +5,7 @@ import DataContext from "../context/DataContext"
 
 const DEFAULT_CONFIG = {
   id: "",
-  address: null,
+  seed: null,
   defaultRipple: false,
   blackholed: false
 }
@@ -24,7 +24,7 @@ function CreateAccountModal({ show, handleClose }) {
     })
   }
 
-  const onChangeAddress = (event) => {
+  const onChangeSeed = (event) => {
     setConfig({
       ...config,
       [event.target.name]: event.target.value
@@ -96,10 +96,10 @@ function CreateAccountModal({ show, handleClose }) {
                 />
               </Form.Group>
             ) : (
-              <Form.Group className="mb-3" controlId="node.address">
-                <Form.Label>Address</Form.Label>
-                <Form.Control type="text" onChange={onChangeAddress} name="address" />
-                <Form.Text>Use an existing account (read-only)</Form.Text>
+              <Form.Group className="mb-3" controlId="node.seed">
+                <Form.Label>Seed</Form.Label>
+                <Form.Control type="text" onChange={onChangeSeed} name="seed" />
+                <Form.Text>Use an existing account</Form.Text>
               </Form.Group>
             ) 
           }

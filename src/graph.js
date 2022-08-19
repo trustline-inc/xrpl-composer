@@ -1,6 +1,6 @@
 import Graph from "graph-data-structure";
+import { Client, Wallet } from "xrpl"
 import {
-  createAccount,
   hasTrustLine,
   createTrustLine,
   enableRippling,
@@ -15,7 +15,7 @@ const graph = Graph(JSON.parse(saved));
  * @param {*} data 
  */
 export async function createNode(data) {
-  const { id, defaultRipple, address } = data;
+  const { id, defaultRipple, seed } = data;
   let config = localStorage.getItem("config")
 
   if (!config) {
@@ -25,17 +25,21 @@ export async function createNode(data) {
   }
 
   if (!config[id]) {
-    if (address) {
-      // read-only account
-      config[id] = {
-        account: { address }
-      }
-    } else {
-      var account = await createAccount()
-      console.log(`${id}:`, account.address)
-      if (defaultRipple) await enableRippling(account)
-      config[id] = { account, ...data }
+    const wallet = Wallet.fromSecret(seed)
+    const api = new Client("wss://s.altnet.rippletest.net:51233")
+    await api.connect()
+    const { wallet: _wallet } = await api.fundWallet(wallet)
+    const account = {
+      xAddress: _wallet.xAddress,
+      secret: _wallet.seed,
+      classicAddress: _wallet.classicAddress,
+      address: _wallet.address
     }
+    config[id] = { account }
+
+    console.log(`${id}:`, account.address)
+    if (defaultRipple) await enableRippling(account)
+    config[id] = { account, ...data }
 
     const newConfig = JSON.stringify(config, null, 2);
     localStorage.setItem("config", newConfig)
@@ -61,8 +65,8 @@ export async function createEdge(source, target, currency, limit) {
     config = JSON.parse(config)
   }
 
-  if (!await hasTrustLine(config[source].account.address, config[target].account.address, currency)) {
-    await createTrustLine(config[source].account, config[target].account.address, currency, limit)
+  if (!await hasTrustLine(config[source].account.seed, config[target].account.seed, currency)) {
+    await createTrustLine(config[source].account, config[target].account.seed, currency, limit)
   }
   graph.addEdge(source, target);
   graph.setEdgeWeight(source, target, 0)
@@ -96,7 +100,7 @@ export async function removeNode(id) {
  */
 export async function updateEdges(source, destination, amount, path) {
   const config = JSON.parse(localStorage.getItem("config"))
-  const tx = await makePayment(config[source].account, config[destination].account.address, amount, path)
+  const tx = await makePayment(config[source].account, config[destination].account.seed, amount, path)
   console.log(tx)
   if (tx.resultCode === "tecPATH_PARTIAL") {
   } else if (tx.resultCode === "tecPATH_DRY") {
