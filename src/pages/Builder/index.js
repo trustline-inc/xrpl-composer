@@ -110,7 +110,7 @@ function Builder() {
   React.useEffect(() => {
     (async () => {
       if (selectedNode && data.config[selectedNode]) {
-        const trustLines = await getTrustLines(data.config[selectedNode].wallet.classicAddress)
+        const trustLines = await getTrustLines(data.config[selectedNode]?.wallet?.classicAddress)
         setAccountTrustLines(trustLines)
       }
     })()

@@ -16,7 +16,7 @@ const graph = Graph(JSON.parse(saved));
  * @param {*} data 
  */
 export async function createNode(data) {
-  const { id, defaultRipple, seed, address } = data;
+  let { id, defaultRipple, wallet } = data;
   let config = localStorage.getItem("config")
 
   if (!config) {
@@ -26,29 +26,25 @@ export async function createNode(data) {
   }
 
   if (!config[id]) {
-    let wallet;
-
     const api = new Client("wss://s.altnet.rippletest.net:51233")
     await api.connect()
 
-    if (seed) {
+    if (wallet.seed) {
       // Import account
-      wallet = Wallet.fromSecret(seed)
+      wallet = Wallet.fromSecret(wallet.seed)
       // TODO: Check if account is already funded
       await api.fundWallet(wallet)
-    } else if (address) {
+    } else if (wallet.classicAddress) {
       // Read-only account
-      wallet = { classicAddress: address }
     } else {
       // Generate new account
       wallet = (await api.fundWallet()).wallet
     }
 
-    config[id] = { wallet }
+    config[id] = { ...data, wallet }
 
     console.log(`${id}:`, wallet.classicAddress)
     if (defaultRipple) await enableRippling(wallet)
-    config[id] = { wallet, ...data }
 
     const newConfig = JSON.stringify(config, null, 2);
     localStorage.setItem("config", newConfig)
