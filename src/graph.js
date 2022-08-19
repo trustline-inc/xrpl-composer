@@ -99,6 +99,7 @@ export async function createEdge(source, target, currency, limit) {
 
   if (await hasTrustLine(config[source].wallet.classicAddress, config[target].wallet.classicAddress, currency)) {
     // Note: to fully delete a trust line, you also have to offload any positive balance. We're not doing that here (yet)
+    // The user should offload the balance using the payment validation tool first.
     await deleteTrustLine(config[source].wallet, config[target].wallet.classicAddress, currency)
   }
   graph.removeEdge(source, target);
