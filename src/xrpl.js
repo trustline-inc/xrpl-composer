@@ -46,7 +46,7 @@ export async function blackhole(account) {
 
 export async function hasTrustLine(classicAddress, counterparty, currency) {
   const trustlines = await api.getTrustlines(classicAddress)
-  return trustlines.some(trustline => (trustline.specification.counterparty === counterparty && trustline.specification.currency === currency))
+  return trustlines.some(trustline => (trustline.specification.counterparty === counterparty && trustline.specification.currency === currency && Number(trustline.specification.limit) > 0))
 }
 
 export async function createTrustLine(account, counterparty, currency, limit) {
@@ -215,9 +215,9 @@ export async function makePayment(
   let latestLedgerVersion = await api.getLedgerVersion()
   const tx = {
     TransactionType: "Payment",
-    Account: sender.wallet.classicAddress,
+    Account: sender.classicAddress,
     Amount: amount,
-    Destination: receiver,
+    Destination: receiver.classicAddress,
     LastLedgerSequence: latestLedgerVersion + 15,
   }
   if (path) tx.Paths = [JSON.parse(path)]

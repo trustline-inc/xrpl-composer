@@ -132,7 +132,7 @@ export async function removeNode(id) {
  */
 export async function updateEdges(source, destination, amount, path) {
   const config = JSON.parse(localStorage.getItem("config"))
-  const tx = await makePayment(config[source].wallet, config[destination].wallet.seed, amount, path)
+  const tx = await makePayment(config[source].wallet, config[destination].wallet, amount, path)
   console.log(tx)
   if (tx.resultCode === "tecPATH_PARTIAL") {
   } else if (tx.resultCode === "tecPATH_DRY") {
